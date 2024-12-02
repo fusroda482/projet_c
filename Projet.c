@@ -8,10 +8,14 @@
 #include <stdbool.h> 
 #include <time.h> 
 #include "gestion_clavier.c"
+#include "objet.c"
+
 
 
 #define LARGEUR 10
 #define HAUTEUR 14
+
+#define frame 5e3
 
 struct jeu {
 	int position;
@@ -38,7 +42,7 @@ struct jeu init_jeu() {
 
 void affiche_jeu(struct jeu p) {
 	
-	system("clear");	
+	//system("clear");	
 	
 	for(int i=-1; i< HAUTEUR+2; i++) {
 	
@@ -56,8 +60,9 @@ void affiche_jeu(struct jeu p) {
 			}
 			
 			// Les objets
-			else if (i < HAUTEUR && p.objets[i][j] == 1){
-				printf("O ");
+			else if (i < HAUTEUR && p.objets[i][j] != 0){
+				
+				affiche_objets( p.objets[i][j]);
 			}
 			
 			else {
@@ -73,13 +78,13 @@ void affiche_jeu(struct jeu p) {
 }
 
 
-int deplacer(char direction, struct jeu p){
+int deplacer(char direction, struct jeu p, char droite, char gauche){
 
-	if (direction == 'a' && (p.position - p.taille) > 0){
+	if (direction == droite && (p.position - p.taille) > 0){
 		p.position--;
 	}
 
-	if (direction == 'd' && (p.position + p.taille) < LARGEUR - 1){
+	if (direction == gauche && (p.position + p.taille) < LARGEUR - 1){
 		p.position++;
 	}
 
@@ -92,24 +97,30 @@ void mise_a_jour_objets(int objets[HAUTEUR][LARGEUR]){
 	
 	// 1. Disparition
 	for (int j = 0; j < LARGEUR; j++){
+		
 		objets[HAUTEUR - 1][j] = 0;
 	}
+	
 	// 2. Déplacement
 	for (int i = HAUTEUR - 2; i >= 0; i--){
+	
 		for (int j = 0; j < LARGEUR; j++){
-			if (objets[i][j] == 1){
+		
+			if (objets[i][j] != 0){
+				
+				int temp = objets[i][j];
 				objets[i][j] = 0;
-				objets[i+1][j] = 1;
+				objets[i+1][j] = temp;
 			}
 		}
 	}
+	
 	// 3. Apparition
 	
-	int apparition = rand() % 3;
+	int objet= prob_apparition();
 	
-	if (apparition == 0){
-		objets[0][rand() % LARGEUR] = 1;
-	}
+	
+	objets[0][rand() % LARGEUR] = objet;
 
 }
 
@@ -118,12 +129,28 @@ struct jeu verifier_colision(struct jeu p){
 	
 	for (int j = 0; j < LARGEUR; j++){
 		
-		if (j >= p.position-p.taille && j <= p.position+p.taille && p.objets[HAUTEUR - 1][j] == 1){	// Si objet touche radeau
-														// Score augmente
-			p.score++;
+		if (j >= p.position-p.taille && j <= p.position+p.taille && p.objets[HAUTEUR - 1][j] != 0){	// Si objet touche radeau 
+			
+			switch (p.objets[HAUTEUR - 1][j]){
+				
+				case 1 :
+					p.score++;
+					break;
+					
+				case 2 : 
+					Augmente_taille(& p.taille, & p.position, LARGEUR, 2);
+					break;
+				
+				case -1 :
+					Baisse_taille(& p.taille, & p.position, LARGEUR, 2);
+					break;
+					
+			}//fin switch
+			
+			
 		}
 		
-		if( (j < p.position-p.taille || j > p.position+p.taille)  && p.objets[HAUTEUR - 1][j] == 1){	// Sinon baisse
+		if( (j < p.position-p.taille || j > p.position+p.taille)  && p.objets[HAUTEUR - 1][j] == 1){	// Si objet normale touche pas
 			p.score --;
 		}
 	}
@@ -196,9 +223,82 @@ struct jeu charge_partie(void){
 	return p; 
 }
 
+
+bool Faire_Tomber(int diff, int * frame_tot){ // Faire tomber à chaque "diff" frame
+
+	if(*(frame_tot) == diff){
+		* frame_tot = 0; // renitialiser la variable
+		return true;
+	}
+	
+	return false;
+}
+
+// Partie Multijouer :
+
+void affiche_jeu_multi(struct jeu p1, struct jeu p2){
+	
+	affiche_jeu(p1);
+	printf("\n Score : %d\n", p1.score);
+	printf("\n\n\n");
+	affiche_jeu(p2);
+	printf("\n Score : %d\n", p2.score);
+}
+
+void multi(){
+	
+	config_terminal(); // Rend le terminal non canonique et n'affiche pas les char saisie
+	
+	srand(time(NULL)); // Pour l'aléatoire
+	
+	struct jeu p1 = init_jeu();
+	struct jeu p2 = init_jeu();
+	
+	system("clear");
+	
+	affiche_jeu_multi(p1, p2);
+	
+	char touche;
+	int frame_total = 0;
+	
+	
+	while(touche != 'q'){
+	
+		// Si Une touche est tapé deplacer le radeau
+		if(read(STDIN_FILENO, &touche, 1) == 1){
+			p1.position = deplacer(touche, p1, 'a', 'd');
+			p2.position = deplacer(touche, p2, '1', '3');
+		}
+		
+		usleep(frame); // Delais pour que les objets tembent (en microsecondes)
+		
+		frame_total += frame;
+		
+		if(Faire_Tomber(frame*100, &frame_total)){
+			
+			p1 = verifier_colision(p1);
+			p2 = verifier_colision(p2);
+			
+			
+			mise_a_jour_objets(p1.objets);
+			mise_a_jour_objets(p2.objets);
+		}
+		
+		system("clear");
+		affiche_jeu_multi(p1, p2);
+		
+		
+	}
+	
+	restaurer_terminal(); // Restaurer le terminal a son état normal
+}
+
 // Programme principal
 int main(void) {
 
+	multi();
+	
+	/*
 	config_terminal(); // Rend le terminal non canonique et n'affiche pas les char saisie
 	
 	srand(time(NULL)); // Pour l'aléatoire
@@ -208,24 +308,26 @@ int main(void) {
 	
 	
 	char touche;
+	int frame_total = 0;
 	
-	int i = 0;
 	
-	int t_1 = time(NULL);
+	while(touche != 'q' /&& p.score > -50){
 	
-	while(touche != 'q' && p.score > -50){
-		
 		// Si Une touche est tapé deplacer le radeau
 		if(read(STDIN_FILENO, &touche, 1) == 1){
 			p.position = deplacer(touche, p);
 		}
 		
-		usleep(1e5); // Delais pour que les objets tembent (en microsecondes)
+		usleep(frame); // Delais pour que les objets tembent (en microsecondes)
 		
-		p = verifier_colision(p);
+		frame_total += frame;
 		
-		if(time(NULL) - t_1 == 1) mise_a_jour_objets(p.objets);
-		 
+		if(Faire_Tomber(frame*50, &frame_total)){
+			
+			p = verifier_colision(p);
+			mise_a_jour_objets(p.objets);
+		}
+					 
 		affiche_jeu(p);
 		
 		printf("\n Score : %d\n", p.score); //Afficher le score de la partie
@@ -237,7 +339,7 @@ int main(void) {
 	
 	printf("\n Score Final %d\n", p.score); // Afficher score  
 	
-	
+	*/
 	
 	return 1;
 }
