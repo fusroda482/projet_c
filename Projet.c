@@ -9,6 +9,7 @@
 #include <time.h> 
 #include "gestion_clavier.c"
 #include "objet.c"
+#include "menu.c"
 
 
 
@@ -22,6 +23,10 @@ struct jeu {
 	int objets[HAUTEUR][LARGEUR];
 	int score;
 	int taille;
+	//Nouveaux :
+	char * pseudo ;
+	int argent;
+	
 };
 
 
@@ -36,6 +41,10 @@ struct jeu init_jeu() {
 	for(int i=0; i < HAUTEUR; i++)
 		for(int j=0; j < LARGEUR; j++)
 			p.objets[i][j] = 0;
+			
+	p.pseudo = "Inconnu.e";
+	p.argent = 0;
+	
 	return p;
 }
 
@@ -78,7 +87,7 @@ void affiche_jeu(struct jeu p) {
 }
 
 
-int deplacer(char direction, struct jeu p, char droite, char gauche){
+int deplacer(char direction, struct jeu p, char droite , char gauche ){
 
 	if (direction == droite && (p.position - p.taille) > 0){
 		p.position--;
@@ -159,10 +168,17 @@ struct jeu verifier_colision(struct jeu p){
 }
 
 
-void sauve_partie(struct jeu p){
+void sauve_partie(struct jeu p, int i){
 	
 	FILE * sauvegarde = NULL;
-	sauvegarde = fopen("Sauvegarde.txt", "w"); // Creation (ou remplacement) Fichier Sauvegarde
+	
+	// Creation Fichier Sauvegarde
+	
+	if(i == 1){sauvegarde = fopen("Sauvegarde1.txt", "w");}
+	if(i == 2){sauvegarde = fopen("Sauvegarde2.txt", "w");}
+	if(i == 3){sauvegarde = fopen("Sauvegarde3.txt", "w");}
+	
+	
 	
 	if(sauvegarde == NULL){		// Erreur dans l'ouverture du programme
 		
@@ -184,18 +200,27 @@ void sauve_partie(struct jeu p){
 	fprintf(sauvegarde, "%d\n", p.taille); // Sauvegarde taille
 	fprintf(sauvegarde, "%d\n", p.score); // Sauvegarde score
 	
+	fprintf(sauvegarde, "%s\n", p.pseudo); //Sauvegarde Pseudo
+	fprintf(sauvegarde, "%d\n", p.argent);
+	
 	fclose(sauvegarde); // Fermermeture du fichier
 		 
 }
 
 
-struct jeu charge_partie(void){
+struct jeu charge_partie(int i){
 	
 	FILE * charge = NULL;
-	charge = fopen("Sauvegarde.txt", "r"); // Lire la sauvegarde
+	
+	// Lire les sauvegardes
+	
+	if(i == 1){charge = fopen("Sauvegarde1.txt", "r");}
+	if(i == 2){charge = fopen("Sauvegarde2.txt", "r");}
+	if(i == 3){charge = fopen("Sauvegarde3.txt", "r");}
+	
 	
 	if(charge == NULL){
-		printf("Erreur de le lecture de la sauvegarde\n");
+		printf("Fichier Inexistant\n");
 		struct jeu defaut = init_jeu(); 
 		return defaut; // Renvoyer un jeu par defaut
 	}
@@ -218,6 +243,13 @@ struct jeu charge_partie(void){
 	// Pour le score
 	fscanf(charge, "%d", &p.score);
 	
+	//Pour le pseudo
+	fscanf(charge, "%20[^\n]", p.pseudo);
+	
+	//Pour l'argent
+	fscanf(charge, "%d", &p.argent);
+	
+	
 	fclose(charge); // Fermeture du fichier
 	
 	return p; 
@@ -227,11 +259,88 @@ struct jeu charge_partie(void){
 bool Faire_Tomber(int diff, int * frame_tot){ // Faire tomber à chaque "diff" frame
 
 	if(*(frame_tot) == diff){
-		* frame_tot = 0; // renitialiser la variable
+		* frame_tot = 0; // Renitialiser la variable
 		return true;
 	}
 	
 	return false;
+}
+
+
+// Partie Solo : 
+
+void solo(int charge){
+	
+	config_terminal(); // Rend le terminal non canonique et n'affiche pas les char saisie
+	       
+	srand(time(NULL)); // Pour l'aléatoire
+	
+	struct jeu p; 
+	
+	if(charge == 0) { p = init_jeu();} // Initialiser
+
+	else { p = charge_partie(charge);}
+	
+	system("clear");
+	
+	affiche_jeu(p);
+	
+	char touche;
+	int frame_total = 0;
+	
+	
+	while(touche != 'q' && p.score > -50){
+	
+		
+		// Si Une touche est tapé deplacer le radeau
+		if(read(STDIN_FILENO, &touche, 1) == 1){
+			p.position = deplacer(touche, p, 'a', 'd');
+		}
+		
+		usleep(frame); // Delais pour que les objets tembent (en microsecondes)
+		
+		frame_total += frame;
+		
+		if(Faire_Tomber(frame*50, &frame_total)){
+			
+			p = verifier_colision(p);
+			mise_a_jour_objets(p.objets);
+		}
+				
+		system("clear");
+			 
+		affiche_jeu(p);
+		
+		printf("\n Score : %d\n", p.score); //Afficher le score de la partie
+	}
+	
+	
+	printf("\nVoulez vous sauvegarder y/n\n");
+				
+	while(true){
+		
+		if(read(STDIN_FILENO, &touche, 1) == 1 &&touche == 'y'){
+			restaurer_terminal(); // Restaurer le terminale à son état initial
+			
+			char * nom_sauvegarde[3] = {(charge_partie(1)).pseudo,
+			(charge_partie(2)).pseudo, (charge_partie(3)).pseudo};
+					
+			int partie = menu(3, nom_sauvegarde);
+						
+			sauve_partie(p, partie);
+			
+			break;
+			}
+			
+		else if(touche == 'n'){break;} 
+		
+	}
+	
+	restaurer_terminal(); // Restaurer le terminale à son état initial
+	
+	
+	int position = menu(taille_menu_principale, mprincipale);
+	menu_principale(position);
 }
 
 // Partie Multijouer :
@@ -270,11 +379,11 @@ void multi(){
 			p2.position = deplacer(touche, p2, '1', '3');
 		}
 		
-		usleep(frame); // Delais pour que les objets tembent (en microsecondes)
+		usleep(frame); // Delais pour que les objets tambent (en microsecondes)
 		
 		frame_total += frame;
 		
-		if(Faire_Tomber(frame*100, &frame_total)){
+		if(Faire_Tomber(frame*50, &frame_total)){
 			
 			p1 = verifier_colision(p1);
 			p2 = verifier_colision(p2);
@@ -290,56 +399,74 @@ void multi(){
 		
 	}
 	
-	restaurer_terminal(); // Restaurer le terminal a son état normal
+	restaurer_terminal();
+	
+	int position = menu(taille_menu_principale, mprincipale);
+	menu_principale(position);
 }
+
+// Partie Menu : 
+int menu(int taille, char * m[]){
+	
+	config_terminal(); // Mode non canonique
+	
+	char touche;
+	int menu_position = 0;
+	
+	while(touche != '\n'){
+	
+		affiche_menu(menu_position, taille, m);
+		
+		if(read(STDIN_FILENO, &touche, 1) == 1){ 
+			deplacer_curseur(&menu_position, touche, 'a', 'd', taille);
+		}
+		
+		usleep(frame);
+		
+		system("clear");
+	}
+	
+	restaurer_terminal();
+	
+	return menu_position;
+}
+
+
+void menu_principale(int position){
+	
+	switch(position){
+		case 0 : // Pour jouer seul (le jeu classique)
+			solo(0);
+			break;
+		
+		case 1 : // Pour jouer à deux
+			multi();
+			break;
+			
+		case 2 : // Pour charger une partie solo (pas possible pour le multi)
+			char * nom_sauvegarde[3] = {(charge_partie(1)).pseudo,
+			(charge_partie(2)).pseudo, (charge_partie(3)).pseudo};
+			
+			int partie = menu(3, nom_sauvegarde);
+			
+			solo(partie);
+			break; 
+							
+			
+			
+			
+		
+	}//fin switch
+		
+}
+
 
 // Programme principal
 int main(void) {
-
-	multi();
 	
-	/*
-	config_terminal(); // Rend le terminal non canonique et n'affiche pas les char saisie
+	menu_principale(menu(taille_menu_principale, mprincipale));
 	
-	srand(time(NULL)); // Pour l'aléatoire
-	
-	struct jeu p = init_jeu(); // Initialiser
-	affiche_jeu(p);
-	
-	
-	char touche;
-	int frame_total = 0;
-	
-	
-	while(touche != 'q' /&& p.score > -50){
-	
-		// Si Une touche est tapé deplacer le radeau
-		if(read(STDIN_FILENO, &touche, 1) == 1){
-			p.position = deplacer(touche, p);
-		}
-		
-		usleep(frame); // Delais pour que les objets tembent (en microsecondes)
-		
-		frame_total += frame;
-		
-		if(Faire_Tomber(frame*50, &frame_total)){
-			
-			p = verifier_colision(p);
-			mise_a_jour_objets(p.objets);
-		}
-					 
-		affiche_jeu(p);
-		
-		printf("\n Score : %d\n", p.score); //Afficher le score de la partie
-	}
-	
-	sauve_partie(p); // Sauvegarder la partie
-	
-	restaurer_terminal(); // Restaurer le terminal a son état normal
-	
-	printf("\n Score Final %d\n", p.score); // Afficher score  
-	
-	*/
+	restaurer_terminal();
 	
 	return 1;
 }
