@@ -9,7 +9,6 @@
 #include <time.h> 
 #include "gestion_clavier.c"
 
-
 #define LARGEUR 10
 #define HAUTEUR 14
 
@@ -204,8 +203,8 @@ int main(void) {
 	srand(time(NULL)); // Pour l'aléatoire
 	
 	struct jeu p = init_jeu(); // Initialiser
+
 	affiche_jeu(p);
-	
 	
 	char touche;
 	
@@ -236,8 +235,6 @@ int main(void) {
 	restaurer_terminal(); // Restaurer le terminal a son état normal
 	
 	printf("\n Score Final %d\n", p.score); // Afficher score  
-	
-	
-	
+
 	return 1;
 }
