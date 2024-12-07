@@ -14,7 +14,8 @@ char * mpause [4]= {"Continuer", "Sauvegarder", "Réglage", "Quitter"};
 const int taille_menu_pause = 4;
 
 
-
+char* s [3] = {"Sauvegarde 1", "Sauvegarde 2", "Sauvegarde 3"};
+const int taille_s = 3; 
 
 		
 	

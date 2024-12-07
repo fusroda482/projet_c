@@ -11,7 +11,7 @@ void affiche_objets(int objets){
 	switch(objets){
 		
 		case -1 : 
-			printf("-1 ");
+			printf("\U0001F480 "); // Skull
 			break;
 			
 		case 1 : 

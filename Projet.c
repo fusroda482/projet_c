@@ -7,6 +7,7 @@
 #include <math.h> 
 #include <stdbool.h> 
 #include <time.h> 
+#include <string.h>
 #include "gestion_clavier.c"
 #include "objet.c"
 #include "menu.c"
@@ -18,17 +19,21 @@
 
 #define frame 5e3
 
+
 struct jeu {
 	int position;
 	int objets[HAUTEUR][LARGEUR];
 	int score;
 	int taille;
 	//Nouveaux :
-	char * pseudo ;
+	char pseudo [20]  ;
 	int argent;
 	
 };
 
+void menu_principale(int position);
+char menu_pause(int position, struct jeu p);
+int menu(int taille, char *m[]);
 
 struct jeu init_jeu() {
 
@@ -42,7 +47,7 @@ struct jeu init_jeu() {
 		for(int j=0; j < LARGEUR; j++)
 			p.objets[i][j] = 0;
 			
-	p.pseudo = "Inconnu.e";
+	strcpy(p.pseudo, "Inconnu.e\n");
 	p.argent = 0;
 	
 	return p;
@@ -200,8 +205,8 @@ void sauve_partie(struct jeu p, int i){
 	fprintf(sauvegarde, "%d\n", p.taille); // Sauvegarde taille
 	fprintf(sauvegarde, "%d\n", p.score); // Sauvegarde score
 	
-	fprintf(sauvegarde, "%s\n", p.pseudo); //Sauvegarde Pseudo
-	fprintf(sauvegarde, "%d\n", p.argent);
+	fputs(p.pseudo, sauvegarde); // Sauvegarde Pseudo
+	fprintf(sauvegarde, "%d\n", p.argent); // Sauvegarde Argent 
 	
 	fclose(sauvegarde); // Fermermeture du fichier
 		 
@@ -220,7 +225,7 @@ struct jeu charge_partie(int i){
 	
 	
 	if(charge == NULL){
-		printf("Fichier Inexistant\n");
+		//printf("Fichier Inexistant\n");
 		struct jeu defaut = init_jeu(); 
 		return defaut; // Renvoyer un jeu par defaut
 	}
@@ -244,7 +249,7 @@ struct jeu charge_partie(int i){
 	fscanf(charge, "%d", &p.score);
 	
 	//Pour le pseudo
-	fscanf(charge, "%20[^\n]", p.pseudo);
+	fgets(p.pseudo, 20, charge);
 	
 	//Pour l'argent
 	fscanf(charge, "%d", &p.argent);
@@ -271,7 +276,7 @@ bool Faire_Tomber(int diff, int * frame_tot){ // Faire tomber à chaque "diff" f
 
 void solo(int charge){
 	
-	config_terminal(); // Rend le terminal non canonique et n'affiche pas les char saisie
+	//config_terminal(); // Rend le terminal non canonique et n'affiche pas les char saisie
 	       
 	srand(time(NULL)); // Pour l'aléatoire
 	
@@ -291,6 +296,12 @@ void solo(int charge){
 	
 	while(touche != 'q' && p.score > -50){
 	
+		
+		if(touche == 'p'){
+			int option =  menu(taille_menu_pause, mpause);
+			touche = menu_pause(option, p);
+			
+		}
 		
 		// Si Une touche est tapé deplacer le radeau
 		if(read(STDIN_FILENO, &touche, 1) == 1){
@@ -312,35 +323,13 @@ void solo(int charge){
 		affiche_jeu(p);
 		
 		printf("\n Score : %d\n", p.score); //Afficher le score de la partie
-	}
-	
-	
-	printf("\nVoulez vous sauvegarder y/n\n");
-				
-	while(true){
 		
-		if(read(STDIN_FILENO, &touche, 1) == 1 &&touche == 'y'){
-			restaurer_terminal(); // Restaurer le terminale à son état initial
-			
-			char * nom_sauvegarde[3] = {(charge_partie(1)).pseudo,
-			(charge_partie(2)).pseudo, (charge_partie(3)).pseudo};
-					
-			int partie = menu(3, nom_sauvegarde);
-						
-			sauve_partie(p, partie);
-			
-			break;
-			}
-			
-		else if(touche == 'n'){break;} 
 		
 	}
 	
-	restaurer_terminal(); // Restaurer le terminale à son état initial
 	
-	
-	int position = menu(taille_menu_principale, mprincipale);
-	menu_principale(position);
+	touche = 'r';
+	//restaurer_terminal();
 }
 
 // Partie Multijouer :
@@ -356,7 +345,7 @@ void affiche_jeu_multi(struct jeu p1, struct jeu p2){
 
 void multi(){
 	
-	config_terminal(); // Rend le terminal non canonique et n'affiche pas les char saisie
+	//config_terminal(); // Rend le terminal non canonique et n'affiche pas les char saisie
 	
 	srand(time(NULL)); // Pour l'aléatoire
 	
@@ -399,20 +388,18 @@ void multi(){
 		
 	}
 	
-	restaurer_terminal();
-	
-	int position = menu(taille_menu_principale, mprincipale);
-	menu_principale(position);
+	touche = 'r';
+	//restaurer_terminal();
 }
 
 // Partie Menu : 
 int menu(int taille, char * m[]){
 	
-	config_terminal(); // Mode non canonique
-	
+	 
 	char touche;
 	int menu_position = 0;
 	
+
 	while(touche != '\n'){
 	
 		affiche_menu(menu_position, taille, m);
@@ -426,8 +413,8 @@ int menu(int taille, char * m[]){
 		system("clear");
 	}
 	
-	restaurer_terminal();
-	
+
+	touche = 't';
 	return menu_position;
 }
 
@@ -436,37 +423,71 @@ void menu_principale(int position){
 	
 	switch(position){
 		case 0 : // Pour jouer seul (le jeu classique)
-			solo(0);
-			break;
+			solo(0);			
+			return;
 		
 		case 1 : // Pour jouer à deux
 			multi();
 			break;
 			
+			
 		case 2 : // Pour charger une partie solo (pas possible pour le multi)
-			char * nom_sauvegarde[3] = {(charge_partie(1)).pseudo,
-			(charge_partie(2)).pseudo, (charge_partie(3)).pseudo};
-			
-			int partie = menu(3, nom_sauvegarde);
-			
-			solo(partie);
-			break; 
-							
-			
-			
-			
 		
+			int  charge = menu(taille_s, s);
+			solo(charge + 1);
+			break;
+			
+		case 5 : 
+			break;
+												
 	}//fin switch
 		
 }
 
 
+char menu_pause(int position, struct jeu p){
+	
+	switch(position){
+		case 0 :
+			return 'c';
+
+		
+		case 1 :
+			int sauvegarde = menu(taille_s, s);
+			sauve_partie(p, sauvegarde + 1);
+			return 'c';
+			
+			
+		case 2 :
+			return 'c';
+			
+			
+		case 3 : 
+			return 'q';
+			
+	}//fin switch
+}
+
+
 // Programme principal
 int main(void) {
+
+	config_terminal(); // Mode non canonique
 	
-	menu_principale(menu(taille_menu_principale, mprincipale));
+	int position = menu(taille_menu_principale, mprincipale);;
+	
+	while(position != 5){
+		
+		menu_principale(position);
+		position = menu(taille_menu_principale, mprincipale);
+		
+	}
 	
 	restaurer_terminal();
 	
+	
+	
+	
 	return 1;
 }
+		
