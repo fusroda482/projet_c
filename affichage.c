@@ -5,32 +5,31 @@
 
 #include "menu.h"
 
-/* MENU */
+/* --- MENU --- */
 
 // Display
-void affiche_menu(int position, int taille, char * menu[]){
+void display_menu(struct menu *m){ 
 		
-	for (int i = 0; i < taille; i++){
+	for (int i = 0; i < m->size; i++){
 		
-		if (i == position){
+		if (i == m->position){
 			printf("\033[4m%s\033[24m\n\n", menu[i]);		
 		}
 		else{
-			printf("%s\n\n", menu[i]);
+			printf("%s\n\n", m->options[i]);
 		}
 	}
 }
 
 // Interaction
-void move_menu(int *menu_position, char key, char up, char down, int menu_size){
+void update_position(struct menu *m, char key, char up, char down){
 
 	if (key == up){
-		*menu_position = (*menu_position) - 1;
+		m->position = PMOD(m->position - 1, m->size);
 	}
 	if (key == down){
-		*menu_position = (*menu_position) + 1;
+		m->position ++; 
 	}
-	*menu_position = ((*menu_position)+ menu_size) % menu_size;
 }
 
 

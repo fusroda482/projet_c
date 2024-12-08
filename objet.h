@@ -17,7 +17,7 @@ struct Map{
 
 struct object{
     
-    void (*action)(struct jeu *p);
+    void (*action)(struct jeu *);
     char *skin;
 };
 
@@ -28,13 +28,19 @@ struct raft{
     char *skin;
 };
 
+struct fleet{
 
-struct jeu {
+    struct raft ships[3];
+    char *name;
+}
+
+
+struct jeu{
 
     // Radeau et flotte
 	int position;
     struct raft fleet[3];
-    int raft; //index du radeau en cours d'utilisation
+    int size; //index du radeau en cours d'utilisation
 
     // Joueur
 	int score;
@@ -49,8 +55,8 @@ struct jeu {
     int Is[HAUTEUR];
     int Js[HAUTEUR];
     int Ks[HAUTEUR];
-    int first = 0;
-    int N_objects = 0;
+    int first;
+    int N_objects;
 };
 
 // PROTOTYPE

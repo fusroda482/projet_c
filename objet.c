@@ -1,11 +1,13 @@
-//Fichier objets speciaux
-
+/* ---- GAME.C ---- */
 #include <stdio.h>
 #include <stdlib.h> 
 #include <stdbool.h> 
 #include <string.h> 
 
+
 #include "objet.h"
+
+#include "material.c"
 
 #define PMOD(a,b) ( ( (a) + (b) ) % b )
 
@@ -16,7 +18,7 @@ void initialiser_jeu(struct jeu *p) {
 
 	// Radeau et flotte
     p->position = LARGEUR / 2;
-    p->feet = {default};
+    p->fleet = default_fleet;
     p->raft = 1;
 
     // Joueur
@@ -24,15 +26,14 @@ void initialiser_jeu(struct jeu *p) {
 	strcpy(p->pseudo, "Inconnu.e\n");// ??
     p->money = 0;
 
-    p->theme = emoji;
-
     // Map
-    p->map = default map;
+    p->map = default_map;
     
     // Objets
-    p->objets = default objets
+    p->objects = default_objects;
 
-	p->argent = 0;
+    int first = 0;
+    int N_objects = 0;
 }
 
 
@@ -53,24 +54,6 @@ int lottery(void){
 }
 
 // Objet Augmente taille de 1 (objet2)
-//void bigger(int * size, int * position, int largeur, int taille_original){
-
-void bigger(struct jeu *p){
-
-    p->raft = (p->raft + 1) % 3; // 3 tailles disponibles
-
-    // Gestion collision en cas d'agrandissement
-    // 1. se cogne contre le mur de droite
-	if (p->position + p->fleet[p->raft].size > largeur){p->position--;}
-    // 2. se cogne contre le mur de gauche	
-	if (p->position - p->fleet[p->raft].size < 0){p->position++;}; 
-
-
-// Objet Baisse taille de 1 (objet -1)
-void smaller(struct jeu *p){
-
-    p->raft = PMOD(p->raft - 1, 3);	
-} 
 
 // Update objets
 void update_objets(struct jeu *p){
@@ -121,7 +104,6 @@ void update_objets(struct jeu *p){
         ps->Js[(ps->first + ps->length) % HAUTEUR] = lot;
     }
     
-
 }
 
 
