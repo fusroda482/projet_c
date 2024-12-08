@@ -1,7 +1,3 @@
-// Groupe G6 B
-// FOUINE Geoffrey
-// SEGHIR Wassim 
-
 #include <stdio.h>
 #include <stdlib.h> 
 #include <stdbool.h> 
@@ -45,4 +41,3 @@ void deplacer_curseur(int *menu_position, char touche, char up, char down, int t
 	}
 	*menu_position = ((*menu_position)+ taille) % taille;
 }
-

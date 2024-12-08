@@ -11,61 +11,50 @@
 #include "gestion_clavier.c"
 #include "objet.c"
 #include "menu.c"
-
+#include "skin.c"
 
 
 #define LARGEUR 10
 #define HAUTEUR 14
 
-#define frame 5e3
+#define frame 5e4
+//void menu_principal(int position);
+//char menu_pause(int position, struct jeu p);
+//int menu(int taille, char *m[]);
 
-
-struct jeu {
-	int position;
-	int objets[HAUTEUR][LARGEUR];
-	int score;
-	int taille;
-	//Nouveaux :
-	char pseudo [20]  ;
-	int argent;
+/*
+// Affichage des objets
+void affiche_objets(int objet, struct jeu p){
 	
-};
-
-void menu_principale(int position);
-char menu_pause(int position, struct jeu p);
-int menu(int taille, char *m[]);
-
-struct jeu init_jeu() {
-
-	struct jeu p;
-
-	p.position = LARGEUR / 2;
-	p.score = 0;
-	p.taille = 2;
-
-	for(int i=0; i < HAUTEUR; i++)
-		for(int j=0; j < LARGEUR; j++)
-			p.objets[i][j] = 0;
+	switch(objet){
+		
+		case -1 : 
+			printf("%s", p.theme.objet_m_1);
+			break;
 			
-	strcpy(p.pseudo, "Inconnu.e\n");
-	p.argent = 0;
-	
-	return p;
+		case 1 : 
+			printf("%s", p.theme.objet_1);
+			break;
+			
+		case 2 : 
+			printf("%s", p.theme.objet_2);
+			break;
+	}
 }
-
+*/
 
 void affiche_jeu(struct jeu p) {
 	
 	//system("clear");	
 	
-	for(int i=-1; i< HAUTEUR+2; i++) {
+	for (int i = -1; i < HAUTEUR+2; i++) {
 	
-		printf("* "); // '*' sur à gauche de chaque ligne
+		printf("%s ", p.theme.border); // '*' à gauche de chaque ligne
 		
 		for (int j=0; j < LARGEUR; j++){
 
 			if (i == -1 || i == HAUTEUR+1) { 	// '*' sur toutes la ligne du haut
-				printf("* ");			// et celle du bas
+				printf("%s ", p.theme.border);			// et celle du bas
 			}
 			
 			// Le radeau
@@ -76,7 +65,7 @@ void affiche_jeu(struct jeu p) {
 			// Les objets
 			else if (i < HAUTEUR && p.objets[i][j] != 0){
 				
-				affiche_objets( p.objets[i][j]);
+				affiche_objets(p.objets[i][j], p);
 			}
 			
 			else {
@@ -85,7 +74,7 @@ void affiche_jeu(struct jeu p) {
 			
 		} //fin boucle for
 		
-		printf("*\n"); // '*' à chaque fin de ligne
+		printf("%s\n", p.theme.border); // '*' à chaque fin de ligne
 		
 	}// fin boucle for
 
@@ -105,7 +94,7 @@ int deplacer(char direction, struct jeu p, char droite , char gauche ){
 	return p.position;
 }
 
-
+/* SERA INTEGRER DANS OBJET UPGRADE
 void mise_a_jour_objets(int objets[HAUTEUR][LARGEUR]){
 	
 	
@@ -137,8 +126,9 @@ void mise_a_jour_objets(int objets[HAUTEUR][LARGEUR]){
 	objets[0][rand() % LARGEUR] = objet;
 
 }
-
-
+*/
+// EN VRAI C MIEUX SI ON VERIFIE LA COLLISION 
+// DIRECTEMENT DANS LA FONCTION UPDATE OBJET
 struct jeu verifier_colision(struct jeu p){
 	
 	for (int j = 0; j < LARGEUR; j++){
@@ -189,12 +179,12 @@ void sauve_partie(struct jeu p, int i){
 		
 		printf("Probleme a l'ouverture de sauvegarde. Fin de la sauvegarde\n");
 		return;
-	}
+}
 	
 	fprintf(sauvegarde, "%d\n", p.position); // sauvegarder la position
 	
 	// Sauvegarder les objets 
-	for(int i = 0; i < HAUTEUR; i ++){
+	for(int i = 0; i < HAUTEUR; i++){
 		for(int j = 0; j < LARGEUR; j++){
 			fprintf(sauvegarde, "%d ", p.objets[i][j]);
 		}
@@ -303,12 +293,12 @@ void solo(int charge){
 			
 		}
 		
-		// Si Une touche est tapé deplacer le radeau
+		// Si Une touche est tapée deplacer le radeau
 		if(read(STDIN_FILENO, &touche, 1) == 1){
 			p.position = deplacer(touche, p, 'a', 'd');
 		}
 		
-		usleep(frame); // Delais pour que les objets tembent (en microsecondes)
+		usleep(frame); // Delais pour que les objets tombent (en microsecondes)
 		
 		frame_total += frame;
 		
@@ -362,7 +352,7 @@ void multi(){
 	
 	while(touche != 'q'){
 	
-		// Si Une touche est tapé deplacer le radeau
+		// Si Une touche est tapée déplacer le radeau
 		if(read(STDIN_FILENO, &touche, 1) == 1){
 			p1.position = deplacer(touche, p1, 'a', 'd');
 			p2.position = deplacer(touche, p2, '1', '3');
@@ -408,7 +398,7 @@ int menu(int taille, char * m[]){
 			deplacer_curseur(&menu_position, touche, 'a', 'd', taille);
 		}
 		
-		usleep(frame);
+		usleep(frame*10);
 		
 		system("clear");
 	}
@@ -419,7 +409,7 @@ int menu(int taille, char * m[]){
 }
 
 
-void menu_principale(int position){
+void menu_principal(int position){
 	
 	switch(position){
 		case 0 : // Pour jouer seul (le jeu classique)
@@ -444,7 +434,6 @@ void menu_principale(int position){
 		
 }
 
-
 char menu_pause(int position, struct jeu p){
 	
 	switch(position){
@@ -468,25 +457,22 @@ char menu_pause(int position, struct jeu p){
 	}//fin switch
 }
 
-
 // Programme principal
-int main(void) {
+int main(void){
 
 	config_terminal(); // Mode non canonique
 	
-	int position = menu(taille_menu_principale, mprincipale);;
+
+	int position = menu(taille_menu_principal, mprincipal);
 	
 	while(position != 5){
 		
-		menu_principale(position);
-		position = menu(taille_menu_principale, mprincipale);
+		menu_principal(position);
+		position = menu(taille_menu_principal, mprincipal);
 		
 	}
 	
 	restaurer_terminal();
-	
-	
-	
 	
 	return 1;
 }

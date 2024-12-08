@@ -3,45 +3,44 @@
 #include <stdio.h>
 #include <stdlib.h> 
 #include <stdbool.h> 
+#include <string.h> 
 
-// Affichage des objets
-void affiche_objets(int objets){
+#include "objet.h"
 
-	
-	switch(objets){
-		
-		case -1 : 
-			printf("\U0001F480 "); // Skull
-			break;
-			
-		case 1 : 
-			printf("O ");
-			break;
-			
-		case 2 : 
-			printf("2 ");
-			break;
-	}//fin switch
+
+// La méthode pour initialiser la structure
+// avec des paramètres par défaut
+void initialiser_jeu(struct jeu *p) {
+
+	p->position = LARGEUR / 2;
+	p->score = 0;
+	p->taille = 2;
+
+    p->theme = emoji;
+
+	strcpy(p->pseudo, "Inconnu.e\n");// ??
+	p->argent = 0;
 }
 
-// Determiner l'objet qui va apparaitre et sa propabilité
+
+// Determiner l'objet qui va apparaitre en fonction de sa propabilité
 int prob_apparition(void){
 
 	int apparition = rand() % 30;
 	
-	// Propabilité de chaque objets : 
+	// Propabilité de chaque objet : 
 	
 	if(apparition > 0 && apparition <= 10){return 1;}
 	
-	if(apparition > 10 && apparition <=11){return -1;}
+	if(apparition == 11){return -1;}
 	
-	if(apparition >11 && apparition <= 12){return 2;}
+	if(apparition == 12){return 2;}
 	
 	return 0;
 }
 
 // Objet Augmente taille de 1 (objet2)
-void Augmente_taille(int * taille, int * position, int largeur, int taille_original) // Passer les carractéristique en pointeur pour les modifier
+void Augmente_taille(int * taille, int * position, int largeur, int taille_original) // Passer les caractéristiques en pointeur pour les modifier
 {
 	if((*taille) > taille_original){return;} // Bonus non accumulable
 	
