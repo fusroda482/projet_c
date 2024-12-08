@@ -3,7 +3,7 @@
 // Style = Theme & Skin
 
 
-struct theme_prototype{
+struct theme{
     char *border;
     char *objet_m_1;
     char *objet_1;
@@ -19,7 +19,7 @@ struct theme_prototype emoji = {
     "\U0001F48E"
 };
 
-struct skin_prototype{
+struct skin{
     char *size_0;
     char *size_m_1;
     char *size_p_1;

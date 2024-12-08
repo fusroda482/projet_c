@@ -3,20 +3,11 @@
 #include <stdbool.h> 
 #include <time.h> 
 
-char * mprincipale[6] = {"Solo", "Multijoueur", "Charger", "Skin", "Réglages", "Quitter" };
-const int taille_menu_principale = 6;
+#include "menu.h"
 
-char * mpause [4]= {"Continuer", "Sauvegarder", "Réglage", "Quitter"};
-const int taille_menu_pause = 4;
+/* MENU */
 
-
-char* s [3] = {"Sauvegarde 1", "Sauvegarde 2", "Sauvegarde 3"};
-const int taille_s = 3; 
-
-		
-	
-
-
+// Display
 void affiche_menu(int position, int taille, char * menu[]){
 		
 	for (int i = 0; i < taille; i++){
@@ -30,14 +21,58 @@ void affiche_menu(int position, int taille, char * menu[]){
 	}
 }
 
+// Interaction
+void move_menu(int *menu_position, char key, char up, char down, int menu_size){
 
-void deplacer_curseur(int *menu_position, char touche, char up, char down, int taille){
-
-	if (touche == up){
+	if (key == up){
 		*menu_position = (*menu_position) - 1;
 	}
-	if (touche == down){
+	if (key == down){
 		*menu_position = (*menu_position) + 1;
 	}
-	*menu_position = ((*menu_position)+ taille) % taille;
+	*menu_position = ((*menu_position)+ menu_size) % menu_size;
 }
+
+
+/* --- GAME --- */
+
+void display_game(struct jeu *p){
+
+    // Informations pour les objets
+    int index = p->first;
+
+    
+    for (int i = -1; i < HAUTEUR+2; i++){
+
+        // Mur gauche
+        print("%s", p->theme.border);
+        
+        for (int j = 0; j < LARGEUR; j++){
+        
+            if (i == -1 || i == HAUTEUR+1){
+
+                // Plafond et plancher
+                printf("%s", p->theme.border);
+            }
+
+            // Radeau
+            if (i == HAUTEUR && (j >= p->position - p->size && (j <= p->position + p->size)){
+                
+                printf("- ");
+            } 
+
+            // Objets
+            if (p->Is[index] == i && p->Js[index] == j){
+                
+                printf("%s", p->theme.objets[p->Ks[index]]);
+
+            }
+
+            else{print(" ");}
+
+        }
+    
+    }   
+}
+
+void 

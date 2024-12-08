@@ -5,17 +5,29 @@
 
 // LES MENUS, LEURS CHAMPS, LEURS TAILLES
 
+struct menu{
+    char *options[];
+    int size;
+}
+
+// Principal
+struct menu principal;
+struct menu pause;
+struct menu save;
+struct menu skin;
+struct menu settings;
+
 // Principal - champs 
-char *mprincipal[6] = {"Solo", "Multijoueur", "Charger", "Skin", "Réglages", "Quitter" };
+char *main_menu_options[6] = {"Solo", "Multijoueur", "Charger", "Skin", "Réglages", "Quitter" };
 
 // Principal - taille
-const int taille_menu_principal = 6;
+const int main_menu_size = 6;
 
 // Pause - champs
-char *mpause[4]= {"Continuer", "Sauvegarder", "Réglage", "Quitter"};
+char *pause_menu_options[4] = {"Continuer", "Sauvegarder", "Réglage", "Quitter"};
 
 // Pause - taille
-const int taille_menu_pause = 4;
+const int pause_menu_size = 4;
 
 // Sauvegarde - champs
 char *s[3] = {"Sauvegarde 1", "Sauvegarde 2", "Sauvegarde 3"};
@@ -27,9 +39,9 @@ const int taille_sauvegardes = 3;
 // --- PROTOTYPES DES FONCTIONS ---
 
 // -- Affiche Menu --
-void affiche_menu(int menu_position, int taille, char *menu[]);
+void display_menu(int menu_position, int size, char *menu[]);
 
 // -- Déplacer Curseur --
-void deplacer_curseur(int *menu_position, char touche, char up, char down, int taille);
+void move_menu(int *menu_position, char touche, char up, char down, int taille);
 
 #endif

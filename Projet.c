@@ -18,150 +18,17 @@
 #define HAUTEUR 14
 
 #define frame 5e4
-//void menu_principal(int position);
-//char menu_pause(int position, struct jeu p);
-//int menu(int taille, char *m[]);
 
-/*
-// Affichage des objets
-void affiche_objets(int objet, struct jeu p){
-	
-	switch(objet){
-		
-		case -1 : 
-			printf("%s", p.theme.objet_m_1);
-			break;
-			
-		case 1 : 
-			printf("%s", p.theme.objet_1);
-			break;
-			
-		case 2 : 
-			printf("%s", p.theme.objet_2);
-			break;
+void deplacer(char direction, struct jeu *p, char right, char left){
+
+	if (direction == right && (p->position - p->taille) > 0){
+		p->position--;
+	}
+
+	if (direction == left && (p->position + p->taille) < LARGEUR - 1){
+		p->position++;
 	}
 }
-*/
-
-void affiche_jeu(struct jeu p) {
-	
-	//system("clear");	
-	
-	for (int i = -1; i < HAUTEUR+2; i++) {
-	
-		printf("%s ", p.theme.border); // '*' à gauche de chaque ligne
-		
-		for (int j=0; j < LARGEUR; j++){
-
-			if (i == -1 || i == HAUTEUR+1) { 	// '*' sur toutes la ligne du haut
-				printf("%s ", p.theme.border);			// et celle du bas
-			}
-			
-			// Le radeau
-			else if (i == HAUTEUR && j >= p.position-p.taille && j <= p.position+p.taille) {
-				printf("- ");
-			}
-			
-			// Les objets
-			else if (i < HAUTEUR && p.objets[i][j] != 0){
-				
-				affiche_objets(p.objets[i][j], p);
-			}
-			
-			else {
-				printf("  ");
-			}
-			
-		} //fin boucle for
-		
-		printf("%s\n", p.theme.border); // '*' à chaque fin de ligne
-		
-	}// fin boucle for
-
-}
-
-
-int deplacer(char direction, struct jeu p, char droite , char gauche ){
-
-	if (direction == droite && (p.position - p.taille) > 0){
-		p.position--;
-	}
-
-	if (direction == gauche && (p.position + p.taille) < LARGEUR - 1){
-		p.position++;
-	}
-
-	return p.position;
-}
-
-/* SERA INTEGRER DANS OBJET UPGRADE
-void mise_a_jour_objets(int objets[HAUTEUR][LARGEUR]){
-	
-	
-	// 1. Disparition
-	for (int j = 0; j < LARGEUR; j++){
-		
-		objets[HAUTEUR - 1][j] = 0;
-	}
-	
-	// 2. Déplacement
-	for (int i = HAUTEUR - 2; i >= 0; i--){
-	
-		for (int j = 0; j < LARGEUR; j++){
-		
-			if (objets[i][j] != 0){
-				
-				int temp = objets[i][j];
-				objets[i][j] = 0;
-				objets[i+1][j] = temp;
-			}
-		}
-	}
-	
-	// 3. Apparition
-	
-	int objet= prob_apparition();
-	
-	
-	objets[0][rand() % LARGEUR] = objet;
-
-}
-*/
-// EN VRAI C MIEUX SI ON VERIFIE LA COLLISION 
-// DIRECTEMENT DANS LA FONCTION UPDATE OBJET
-struct jeu verifier_colision(struct jeu p){
-	
-	for (int j = 0; j < LARGEUR; j++){
-		
-		if (j >= p.position-p.taille && j <= p.position+p.taille && p.objets[HAUTEUR - 1][j] != 0){	// Si objet touche radeau 
-			
-			switch (p.objets[HAUTEUR - 1][j]){
-				
-				case 1 :
-					p.score++;
-					break;
-					
-				case 2 : 
-					Augmente_taille(& p.taille, & p.position, LARGEUR, 2);
-					break;
-				
-				case -1 :
-					Baisse_taille(& p.taille, & p.position, LARGEUR, 2);
-					break;
-					
-			}//fin switch
-			
-			
-		}
-		
-		if( (j < p.position-p.taille || j > p.position+p.taille)  && p.objets[HAUTEUR - 1][j] == 1){	// Si objet normale touche pas
-			p.score --;
-		}
-	}
-
-	return p;
-}
-
 
 void sauve_partie(struct jeu p, int i){
 	
