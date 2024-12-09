@@ -1,9 +1,10 @@
+/* ------- AFFICHAGE.C -------- */
 #include <stdio.h>
 #include <stdlib.h> 
 #include <stdbool.h> 
 #include <time.h> 
 
-#include "menu.h"
+#include "menu.c"
 
 /* --- MENU --- */
 
@@ -74,4 +75,15 @@ void display_game(struct jeu *p){
     }   
 }
 
-void 
+// Partie Multijouer :
+void display_game_multi(struct jeu &p1, struct jeu &p2){
+	
+    display_game(p1);
+	printf("\n Score : %d\n", p1->score);
+	printf("\n\n\n");
+
+	display_game(p2);
+	printf("\n Score : %d\n", p2->score);
+}
+
+

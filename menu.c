@@ -1,4 +1,4 @@
-// Groupe G6 B
+/ Groupe G6 B
 // FOUINE Geoffrey
 // SEGHIR Wassim 
 
@@ -38,4 +38,5 @@ struct menu m_save = {
     0
 };
 
+// MENUS ACTIONS
 

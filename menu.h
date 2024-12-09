@@ -13,9 +13,9 @@ struct menu{
 // --- PROTOTYPES DES FONCTIONS ---
 
 // -- Affiche Menu --
-void display_menu(int menu_position, int size, char *menu[]);
+void display_menu(struct menu *m);
 
 // -- Déplacer Curseur --
-void move_menu(int *menu_position, char touche, char up, char down, int taille);
+void move_menu(struct menu *m, char touche, char up, char down);
 
 #endif

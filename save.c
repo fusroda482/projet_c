@@ -11,8 +11,6 @@ void save(struct jeu *p, int slot_number){
 	if(i == 2){savefile = fopen("Sauvegarde2.txt", "w");}
 	if(i == 3){savefile = fopen("Sauvegarde3.txt", "w");}
 	
-	
-	
 	if(sauvegarde == NULL){		// Erreur dans l'ouverture du programme
 		
 		printf("Problème à l'ouverture de sauvegarde. Fin de la sauvegarde.\n");
@@ -36,7 +34,6 @@ void save(struct jeu *p, int slot_number){
 	// Sauvegarder les objets 
     for (int i = p->first; i <= p->N_objets; i++){
         fprintf(savefile, "%d ", p->Is[i]);
-        
     }
 
     fprintf(savefile, "\n");
@@ -87,7 +84,7 @@ struct jeu load(int slot_number){
     fscanf(loadfile, "%s", p->map.name);
     
 
-	// Sauvegarder les objets // Y REVENIR !:w
+	// Sauvegarder les objets // Y REVENIR !
     for (int i = 0; i <= 10; i++){
         fscanf(loadfile, "%d", p->Is[i]);
     }
