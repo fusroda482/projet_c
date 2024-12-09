@@ -59,14 +59,18 @@ struct jeu{
     int N_objects;
 };
 
-// PROTOTYPE
+// PROTOTYPES
 void initialiser_jeu(struct jeu *p);
+
 
 
 // PROTOTYPES
 
+// Objets
 int object_generator();
+
+// Raft
+void move_raft(struct jeu *p, char direction, char left, char right);
 void bigger(struct jeu *p);
 void smaller(struct jeu *p);
-
 #endif

@@ -1,3 +1,4 @@
+/* ------ PROJET.C ------ */
 // Groupe G6 B
 // FOUINE Geoffrey
 // SEGHIR Wassim 
