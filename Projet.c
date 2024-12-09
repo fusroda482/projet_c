@@ -7,13 +7,14 @@
 #include <math.h> 
 #include <stdbool.h> 
 #include <time.h> 
-#include <string.h>
+//#include <string.h>
+
 #include "gestion_clavier.c"
 #include "objet.c"
 #include "menu.c"
 #include "skin.c"
 #include "material.c"
-
+#include "gamemode.c"
 
 #define LARGEUR 10
 #define HAUTEUR 14
@@ -30,14 +31,14 @@ bool drop(int delta_t, int * frame_tot){
 	return false;
 }
 
-// -- MAIN MENU --
+// -- MAIN MENU OPTIONS --
 void menu_principal(struct menu *m){
 	
 	switch(m->position){
 
 		case 0 : // Pour jouer seul (le jeu classique)
 			solo(0);			
-			return;
+			return;// why return et non break
 		
 		case 1 : // Pour jouer à deux
 			multi();
@@ -55,16 +56,17 @@ void menu_principal(struct menu *m){
 	}//fin switch
 }
 
-// -- PAUSE --
-char menu_pause(int position, struct jeu p){
+// -- PAUSE OPTIONS --
+char menu_pause(struct menu *m, struct jeu *p){
 	
-	switch(position){
+	switch(m->position){
+
 		case 0 :
 			return 'c';
 
 		case 1 :
-			int sauvegarde = menu(taille_s, s);
-			sauve_partie(p, sauvegarde + 1);
+			int slot_number = menu(taille_s, s);
+			save(p, slot_number + 1);
 			return 'c';
 			
 		case 2 :
@@ -73,7 +75,7 @@ char menu_pause(int position, struct jeu p){
 		case 3 : 
 			return 'q';
 			
-	}//fin switch
+	}
 }
 
 // Partie Menu : 

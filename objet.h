@@ -1,7 +1,7 @@
-/* --- OBJET.H --- */
+/* --- MATERIAL.H --- */
 
-#ifndef OBJET_H
-#define OBJET_H
+#ifndef MATERIAL_H
+#define MATERIAL_H
 
 // JEU
 // La structure
