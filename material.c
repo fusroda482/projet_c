@@ -61,7 +61,17 @@ struct object default_objects[3] = {
 
 
 
-// Fleet
+// --- FLEET ---
+
+// -- ACTIONS --
+void move(struct jeu *p, char direction, char left, char right){
+    
+    if (direction == right && (p->position + p->size) > 0){p->position++;}
+    if (direction == left && (p->position - p->size) > 0){p->position++;}
+}
+
+
+// -- SKINS --
 // --default --
 struct raft default_raft_S{
     1,

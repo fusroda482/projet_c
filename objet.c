@@ -14,7 +14,8 @@
 
 // La méthode pour initialiser la structure
 // avec des paramètres par défaut
-void initialiser_jeu(struct jeu *p) {
+
+void init_jeu(struct jeu *p) {
 
 	// Radeau et flotte
     p->position = LARGEUR / 2;

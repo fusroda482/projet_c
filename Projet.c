@@ -12,6 +12,7 @@
 #include "objet.c"
 #include "menu.c"
 #include "skin.c"
+#include "material.c"
 
 
 #define LARGEUR 10
@@ -19,16 +20,6 @@
 
 #define frame 5e4
 
-void deplacer(char direction, struct jeu *p, char right, char left){
-
-	if (direction == right && (p->position - p->taille) > 0){
-		p->position--;
-	}
-
-	if (direction == left && (p->position + p->taille) < LARGEUR - 1){
-		p->position++;
-	}
-}
 
 bool Faire_Tomber(int diff, int * frame_tot){ // Faire tomber à chaque "diff" frame
 

@@ -5,7 +5,7 @@
 
 // --- STRUCTURE MENU ---
 struct menu{
-    char *options[];
+    char *options[];// ! erreur potentielle !
     int size;
     int position;
 }

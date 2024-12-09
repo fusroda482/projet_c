@@ -32,7 +32,7 @@ struct fleet{
 
     struct raft ships[3];
     char *name;
-}
+};
 
 
 struct jeu{

@@ -34,71 +34,71 @@ void save(struct jeu *p, int slot_number){
     fprint(savefile, "%s\n", p->map.name);
 
 	// Sauvegarder les objets 
-	for(int i = 0; i < HAUTEUR; i++){
-		for(int j = 0; j < LARGEUR; j++){
-			fprintf(sauvegarde, "%d ", p.objets[i][j]);
-		}
-		
-		fprintf(sauvegarde, "\n");
-	}
-	
-	fprintf(sauvegarde, "%d\n", p.taille); // Sauvegarde taille
-	fprintf(sauvegarde, "%d\n", p.score); // Sauvegarde score
-	
-	fputs(p.pseudo, sauvegarde); // Sauvegarde Pseudo
-	fprintf(sauvegarde, "%d\n", p.argent); // Sauvegarde Argent 
-	
+    for (int i = p->first; i <= p->N_objets; i++){
+        fprintf(savefile, "%d ", p->Is[i]);
+        
+    }
+
+    fprintf(savefile, "\n");
+
+    for (int i = p->first; i <= p->N_objets; i++){
+        fprintf(savefile, "%d ", p->Js[i]);
+    }
+
+    fprintf(savefile, "\n");
+
+    for (int i = p->first; i <= p->N_objets; i++){
+        fprintf(savefile, "%d ", p->Ks[i]);
+    }
+
 	fclose(sauvegarde); // Fermermeture du fichier
-		 
 }
 
 
-struct jeu charge_partie(int i){
+struct jeu load(int slot_number){
 	
 	FILE * charge = NULL;
 	
 	// Lire les sauvegardes
 	
-	if(i == 1){charge = fopen("Sauvegarde1.txt", "r");}
-	if(i == 2){charge = fopen("Sauvegarde2.txt", "r");}
-	if(i == 3){charge = fopen("Sauvegarde3.txt", "r");}
+	if(slot_number == 1){loadfile = fopen("Sauvegarde1.txt", "r");}
+	if(slot_number == 2){loadfile = fopen("Sauvegarde2.txt", "r");}
+	if(slot_number == 3){loadfile = fopen("Sauvegarde3.txt", "r");}
 	
 	
-	if(charge == NULL){
+	if(loadfile == NULL){
 		//printf("Fichier Inexistant\n");
-		struct jeu defaut = init_jeu(); 
-		return defaut; // Renvoyer un jeu par defaut
+		return init_jeu(); // Renvoyer un jeu par defaut
 	}
 	
 	struct jeu p;
 	
-	// Pour la position 
-	fscanf(charge, "%d", &p.position);
+    // Radeau et flotte
+    fscanf(loadfile, "%d", &p->position);
+    fscanf(loadfile, "%s", &p->fleet.name);
+    fscanf(loadfile, "%d", &p->size);
+
+    // Joueur
+    fscanf(loadfile, "%d", &p->score);
+    fscanf(loadfile, "%s", &p->pseudo);
+    fscanf(loadfile, "%s", &p->money);
+
+    // Jeu
+    fscanf(loadfile, "%s", p->map.name);
+    
+
+	// Sauvegarder les objets // Y REVENIR !:w
+    for (int i = 0; i <= 10; i++){
+        fscanf(loadfile, "%d", p->Is[i]);
+    }
+    for (int i = 0; i <= 10; i++){
+        fscanf(loadfile, "%d", p->Js[i]);
+    }
+    for (int i = 0; i <= 10; i++){
+        fscanf(loadfile, "%d", p->Ks[i]);
+    }
 	
-	// Pour les objets
-	for(int i = 0; i < HAUTEUR; i++){
-		for(int j = 0; j < LARGEUR; j++){
-			fscanf(charge, "%d", &p.objets[i][j]);
-		}
-	}
-	
-	// Pour la taille 
-	fscanf(charge, "%d", &p.taille);
-	
-	// Pour le score
-	fscanf(charge, "%d", &p.score);
-	
-	//Pour le pseudo
-	fgets(p.pseudo, 20, charge);
-	
-	//Pour l'argent
-	fscanf(charge, "%d", &p.argent);
-	
-	
-	fclose(charge); // Fermeture du fichier
+    fclose(charge); // Fermeture du fichier
 	
 	return p; 
 }
-
-
-
