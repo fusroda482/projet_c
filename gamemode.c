@@ -40,17 +40,7 @@ void solo(int slot_number){
 	
 	while(key != 'q' && p.score > -50){
 	
-		// Pause
-		if(key == 'p'){
-
-            struct menu *m_pause = get_pause_menu();
-            interactive_menu(m_pause);
-
-            if (m_pause->position == 2){
-                break;
-            }
-		}
-		
+			
 		// Si Une touche est tapée deplacer le radeau
 		if (read(STDIN_FILENO, &key, 1) == 1){
 			move_raft(&p, key, 'a', 'd');
@@ -73,10 +63,22 @@ void solo(int slot_number){
 		display_game(&p);
 		
 		printf("\n Score : %d\n", p.score); //Afficher le score de la partie
-		
+		// Pause
+		if(key == 'p'){
+
+            struct menu *m_pause = get_pause_menu();
+            interactive_menu(m_pause);
+
+            key = menu_pause_switch(m_pause, &p);
+            //if (m_pause->position == 2){
+
+            //    key = 'q';
+            //}
+		}
+	
 	}
 	
-	//key = 'r';// Pourquoi ?
+	key = 'q';// Pourquoi ?
 	//restaurer_terminal();
 }
 
@@ -100,6 +102,17 @@ void multi(){
     int frame = 1e3;
 	
 	while(key != 'q'){
+        // Pause
+		if(key == 'p'){
+
+            struct menu *m_pause = get_pause_menu();
+            interactive_menu(m_pause);
+
+            if (m_pause->position == 2){
+                break;
+            }
+		}
+		
 
         
 		// Si Une touche est tapée déplacer le radeau

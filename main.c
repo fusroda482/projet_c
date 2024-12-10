@@ -27,7 +27,6 @@
 
 // -- MAIN MENU SWITCH --
 void menu_principal_switch(struct menu *m){
-	
 
     struct menu *m_save = get_save_menu();
 	
@@ -51,7 +50,7 @@ void menu_principal_switch(struct menu *m){
             
 
 			
-		case 5 : 
+		case 5 : // Quitter
 			break;
 												
 	}//fin switch
@@ -74,6 +73,7 @@ char menu_pause_switch(struct menu *m, struct jeu *p){
 			return 'c';
 			
 		case 2 : // Retour menu principal
+            printf("menu pause case 2 : q");
 			return 'q';
 	}
     return 'q';
@@ -120,7 +120,7 @@ int main(){
         
         interactive_menu(m_main);
         menu_principal_switch(m_main);
-		
+
 	}
 
     my_free_menu(m_main);
