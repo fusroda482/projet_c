@@ -7,7 +7,9 @@
 #define PMOD(a,b) ( ( (a) + (b) ) % b )
 
 // Maps
-struct Map default_map = {"*"}; 
+const struct Map default_map = {"*"}; 
+
+struct Map maps[1] = {default_map};
 
 
 /* --- OBJETS --- */
@@ -28,9 +30,9 @@ void bigger(struct jeu *p){
 
     // Gestion collision en cas d'agrandissement
     // 1. se cogne contre le mur de droite
-	if (p->position + p->fleet[p->index].size > LARGEUR){p->position--;}
+	if (p->position + fleet[p->index_fleet][p->index].size > LARGEUR){p->position--;}
     // 2. se cogne contre le mur de gauche	
-	if (p->position - p->fleet[p->index].size < 0){p->position++;} 
+	if (p->position - fleet[p->index_fleet][p->index].size < 0){p->position++;} 
 }
 
 // 3. Diminue taille
@@ -40,7 +42,7 @@ void smaller(struct jeu *p){
 } 
 
 // -- default --
-struct object default_object_1 = {
+/*struct object default_object_1 = {
     score_pp,
     "1"
 }; 
@@ -54,51 +56,53 @@ struct object default_object_3 = {
     smaller,
     "3"
 };
-
-struct object default_objects[3] = {
-    default_object_1,
-    default_object_2,
-    default_object_3
+*/
+static struct object objects[3] = {
+    {score_pp, "1"},
+    {bigger, "2"},
+    {smaller, "3"}
 };
-
+    
+struct object *get_objects(){
+    return objects;
+}
 
 // Se resservir des struct default ???
 // pour ne pas avoir à redéfinir les fonctions
 // mais directement les skins
 
 
-
 // --- FLEET ---
-
-// -- ACTIONS --
-void move_raft(struct jeu *p, char direction, char left, char right){
-    
-    if (direction == right && (p->position + p->fleet[p->index].size) > 0){p->position++;}
-    if (direction == left && (p->position - p->fleet[p->index].size) > 0){p->position++;}
-}
 
 
 // -- SKINS --
 // --default --
-struct raft default_raft_S = {
+const struct raft default_raft_S = {
     1,
     "___"
 };
 
-struct raft default_raft_M = {
+const struct raft default_raft_M = {
     2,
     "_____"
 };
 
-struct raft default_raft_L = {
+const struct raft default_raft_L = {
     3,
     "_______"
 };
 // -- marine française --
 // -- pirate --
 
-struct fleet default_fleet = {
+
+struct raft fleet[1][3] = {
     {default_raft_S, default_raft_M, default_raft_L},
-    "default"
 };
 
+// -- ACTIONS --
+void move_raft(struct jeu *p, char direction, char left, char right){
+    
+    if (direction == right && (p->position + fleet[p->index_fleet][p->index].size) > 0){p->position++;}
+
+    if (direction == left && (p->position - fleet[p->index_fleet][p->index].size) > 0){p->position++;}
+}

@@ -1,5 +1,6 @@
 /* -------- GAMEMODE.C -------- */
 
+#include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
 
@@ -20,9 +21,8 @@
 // Partie Solo : 
 
 void solo(int slot_number){
-	
-	//config_terminal(); // Rend le terminal non canonique et n'affiche pas les char saisie
 	       
+
 	srand(time(NULL)); // Pour l'aléatoire
 	
 	struct jeu p; 
@@ -44,8 +44,14 @@ void solo(int slot_number){
 	
 		// Pause
 		if(key == 'p'){
-			int option =  menu(taille_menu_pause, mpause);
-			key = m_pause->action(option, p);
+
+            struct menu *m_pause = get_pause_menu();
+            interactive_menu(m_pause);
+
+            if (m_pause->position == 2){
+                break;
+            }
+
 			
 		}
 		
@@ -71,7 +77,7 @@ void solo(int slot_number){
 		
 	}
 	
-	key = 'r';// Pourquoi ?
+	//key = 'r';// Pourquoi ?
 	//restaurer_terminal();
 }
 
@@ -84,20 +90,21 @@ void multi(){
     struct jeu p1;
     struct jeu p2;
 
-	p1 = init_jeu(&p1);
-	p2 = init_jeu(&p2);
+	init_jeu(&p1);
+	init_jeu(&p2);
 	
 	system("clear");
 	
 	char key;
 	int frame_total = 0;
+    int frame = 1e3;
 	
 	while(key != 'q'){
 
 		display_game_multi(&p1, &p2);
         
 		// Si Une touche est tapée déplacer le radeau
-		if(read(STDIN_FILENO, &touche, 1) == 1){
+		if(read(STDIN_FILENO, &key, 1) == 1){
 			move_raft(&p1, key, 'a', 'd');
 			move_raft(&p2, key, '1', '3');
 		}
@@ -114,6 +121,6 @@ void multi(){
 		system("clear");
 	}
 	
-	key = 'r'; // Pourquoi ??
+	//key = 'r'; // Pourquoi ??
 	//restaurer_terminal();
 }

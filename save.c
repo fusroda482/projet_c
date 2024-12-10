@@ -24,16 +24,15 @@ void save(struct jeu *p, int slot_number){
     // Saving p
     // Radeau et flotte
 	fprintf(savefile, "%d\n", p->position);
-    fprintf(savefile, "%s\n", p->fleet.name);
     fprintf(savefile, "%d\n", p->index);
+    fprintf(savefile, "%d\n", p->index_fleet);
+    fprintf(savefile, "%d\n", p->index_map);
 
     // Joueur
     fprintf(savefile, "%d\n", p->score);
     fprintf(savefile, "%s\n", p->pseudo);
     fprintf(savefile, "%d\n", p->money);
 	
-    // Jeu
-    fprintf(savefile, "%s\n", p->map.name);
 
 	// Sauvegarder les objets 
     for (int i = p->first; i <= p->N_objects; i++){
@@ -77,16 +76,16 @@ struct jeu load(int slot_number){
 	
     // Radeau et flotte
     fscanf(loadfile, "%d", &p.position);
-    fscanf(loadfile, "%s", &p.fleet.name);
-    fscanf(loadfile, "%d", &p.fleet[&p.index].size);
+    fscanf(loadfile, "%d", &p.index);
+    fscanf(loadfile, "%d", &p.index_fleet);
+    fscanf(loadfile, "%d", &p.index_map);
 
     // Joueur
     fscanf(loadfile, "%d", &p.score);
-    fscanf(loadfile, "%s", &p.pseudo);
+    fscanf(loadfile, "%s", p.pseudo);
     fscanf(loadfile, "%d", &p.money);
 
     // Jeu
-    fscanf(loadfile, "%s", &p.map.name);
     
 
 	// Sauvegarder les objets // Y REVENIR !

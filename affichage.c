@@ -3,42 +3,94 @@
 #include <stdlib.h> 
 #include <stdbool.h> 
 #include <time.h> 
+#include <string.h>
 
 #include "material.h"
 #include "affichage.h"
 
 #define PMOD(a,b) ( ( (a) + (b) ) % b )
 
+#include <stdio.h>
+
 /* --- MENU --- */
 // MENUS TEXTES
 // Principal
 char *main_menu_options[6] = {"Solo", "Multijoueur", "Charger", "Skin", "Réglages", "Quitter"};
-
-// Pause
-char *pause_menu_options[4] = {"Continuer", "Sauvegarder", "Réglage", "Quitter"};
-
-// Sauvegarde
+char *pause_menu_options[3] = {"Continuer", "Sauvegarder", "Quitter"};
 char *save_menu_options[3] = {"Sauvegarde 1", "Sauvegarde 2", "Sauvegarde 3"};
 
+static struct menu *m_main = NULL;
+static struct menu *m_pause = NULL;
+static struct menu *m_save = NULL;
+
+struct menu *create_menu(int size, char **options) {
+    struct menu *m = malloc(sizeof(struct menu) + size * sizeof(char *));
+    if (m == NULL) {
+        perror("malloc failed");
+        exit(EXIT_FAILURE);
+    }
+    m->size = size;
+    m->position = 0;
+
+    for (int i = 0; i < size; i++) {
+        m->options[i] = strdup(options[i]); // Copier les chaînes dynamiquement
+        if (m->options[i] == NULL) {
+            perror("strdup failed");
+            exit(EXIT_FAILURE);
+        }
+    }
+    return m;
+}
+
+void my_free_menu(struct menu *m){
+    if (m != NULL) {
+        for (int i = 0; i < m->size; i++) {
+            free(m->options[i]); // Libérer chaque chaîne
+        }
+        free(m); // Libérer la structure
+    }
+}
+
+// Fonction pour initialiser tous les menus
+void initialize_menus() {
+    m_main = create_menu(6, main_menu_options);
+    m_pause = create_menu(3, pause_menu_options);
+    m_save = create_menu(3, save_menu_options);
+}
+
+// Fonctions pour accéder aux menus
+struct menu *get_main_menu() {
+    return m_main;
+}
+
+struct menu *get_pause_menu() {
+    return m_pause;
+}
+
+struct menu *get_save_menu() {
+    return m_save;
+}
+
 // MENUS STRUCTURES
+/*
 struct menu m_main = {
-    main_menu_options,
     6,
-    0
+    0,
+    main_menu_options
 };
 
 struct menu m_pause = {
-    pause_menu_options,
     4,
-    0
+    0,
+    pause_menu_options
 };
 
 struct menu m_save = {
-    save_menu_options,
     3,
-    0
+    0,
+    save_menu_options
 };
-
+*/
 
 // Display
 void display_menu(struct menu *m){ 
@@ -70,6 +122,9 @@ void update_position(struct menu *m, char key, char up, char down){
 
 void display_game(struct jeu *p){
 
+    // -- OBJETS --
+    struct object *objects = get_objects();
+
     // Informations pour les objets
     // on commence par le plus haut sur la
     // map donc le dernier de la file
@@ -78,18 +133,18 @@ void display_game(struct jeu *p){
     for (int i = -1; i < HAUTEUR+2; i++){
 
         // Mur gauche
-        printf("%s", p->map.border);
+        printf("%s", maps[p->index_map].border);
         
         for (int j = 0; j < LARGEUR; j++){
         
             if (i == -1 || i == HAUTEUR+1){
 
                 // Plafond et plancher
-                printf("%s", p->map.border);
+                printf("%s", maps[p->index_map].border);
             }
 
             // Radeau
-            if (i == HAUTEUR && (j >= p->position - p->fleet[p->index].size) && (j <= p->position + p->fleet[p->index].size)){
+            if (i == HAUTEUR && (j >= p->position - fleet[p->index_fleet][p->index].size) && (j <= p->position + fleet[p->index_fleet][p->index].size)){
                 
                 printf("- ");
             } 
@@ -97,7 +152,7 @@ void display_game(struct jeu *p){
             // Objets
             if (p->Is[index] == i && p->Js[index] == j){
                 
-                printf("%s", p->objects[p->Ks[index]]);
+                printf("%s", objects[p->Ks[index]].skin);
 
                 index = PMOD(index-1, HAUTEUR);
 

@@ -1,4 +1,4 @@
-/* ------ PROJET.C ------ */
+/* ------ MAIN.C ------ */
 // Groupe G6 B
 // FOUINE Geoffrey
 // SEGHIR Wassim 
@@ -8,6 +8,7 @@
 //#include <math.h> 
 #include <stdbool.h> 
 #include <time.h> 
+#include <unistd.h>
 //#include <string.h>
 
 /*
@@ -22,6 +23,8 @@
 #include "menu.h"
 #include "material.h"
 #include "gamemode.h"
+#include "affichage.h"
+#include "save.h"
 #include "gestion_clavier.h"// à remplacer par config_terminal.h
 
 #include "main.h"
@@ -41,24 +44,32 @@ bool drop(int delta_t, int *frame_tot){
 	return false;
 }
 
-// -- MAIN MENU OPTIONS --
-void menu_principal(struct menu *m){
+
+// -- MAIN MENU SWITCH --
+void menu_principal_switch(struct menu *m){
 	
-	switch(m->position){
+
+    struct menu *m_save = get_save_menu();
+	
+    switch(m->position){
 
 		case 0 : // Pour jouer seul (le jeu classique)
 			solo(0);			
-			return;// why return et non break
+			break;
 		
 		case 1 : // Pour jouer à deux
 			multi();
 			break;
 			
 		case 2 : // Pour charger une partie solo (pas possible pour le multi)
-		
-			int slot_number = menu(taille_s, s);
-			solo(slot_number + 1);// car savegarde1 2 ou 3
+            interactive_menu(m_save);
+            int slot_number = m_save->position;
+			solo(slot_number + 1);// car savegarde 1, 2 ou 3
 			break;
+
+        //case 3 : // Skin
+            
+
 			
 		case 5 : 
 			break;
@@ -66,30 +77,30 @@ void menu_principal(struct menu *m){
 	}//fin switch
 }
 
-// -- PAUSE OPTIONS --
-char menu_pause(struct menu *m, struct jeu *p){
+// -- MENU PAUSE SWITCH --
+char menu_pause_switch(struct menu *m, struct jeu *p){
 	
-	switch(m->position){
+    struct menu *m_save = get_save_menu();
+	
+    switch(m->position){
 
-		case 0 :
+		case 0 : // Continuer
 			return 'c';
 
-		case 1 :
-			int slot_number = menu(taille_s, s);
-			save(p, slot_number + 1);
+		case 1 : // Sauvegarde
+            interactive_menu(m_save);
+            int slot_number = m_save->position + 1;
+			save(*p, slot_number);
 			return 'c';
 			
-		case 2 :
-			return 'c';
-			
-		case 3 : 
+		case 2 : // Retour menu principal
 			return 'q';
-			
 	}
+    return 'q';
 }
 
 // Partie Menu : 
-void menu(struct menu *m){
+void interactive_menu(struct menu *m){
 	 
 	char key;
 	
@@ -97,7 +108,7 @@ void menu(struct menu *m){
 	
 	    display_menu(m);
 		
-		if(read(STDIN_FILENO, &touche, 1) == 1){ 
+		if(read(STDIN_FILENO, &key, 1) == 1){ 
 			move_menu(m, key, 'a', 'd');
 		}
 		
@@ -114,16 +125,27 @@ void menu(struct menu *m){
 // Programme principal
 int main(){
 
+    // initialisation des menus
+    // -- MENUS --
+    initialize_menus();
+
+    struct menu *m_main = get_main_menu();
+    //struct menu *m_pause = get_pause_menu();
+
 	config_terminal(); // Mode non canonique
     
-    display_menu(&m_main);
+    display_menu(m_main);
 	
-	while(m_main.position != 5){
+	while(m_main->position != 5){
         
-        menu(&m_main);
+        interactive_menu(m_main);
 		
 	}
-	
+
+    my_free_menu(m_main);
+    //free_menu(m_pause);
+    //free_menu(m_save);
+
 	restaurer_terminal();
 	
 	return 1;

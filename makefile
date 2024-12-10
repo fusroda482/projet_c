@@ -10,7 +10,7 @@ CFLAGS = -Wall -Wextra -pedantic
 SRCS = main.c gestion_clavier.c gamemode.c save.c affichage.c game.c material.c 
 
 # Fichiers d'en-tête
-INCLUDES = main.h gestion_clavier.h gamemode.h save.h afficage.h game.h material.h
+INCLUDES = main.h gestion_clavier.h gamemode.h save.h affichage.h game.h material.h
 
 # Règle pour compiler le projet
 all: $(SRCS)

@@ -18,8 +18,10 @@ void init_jeu(struct jeu *p) {
 
 	// Radeau et flotte
     p->position = LARGEUR / 2;
-    p->fleet = default_fleet;
     p->index = 1;
+    p->index_fleet = 0;
+    p->index_map = 0;
+
 
     // Joueur
 	p->score = 0;
@@ -27,10 +29,8 @@ void init_jeu(struct jeu *p) {
     p->money = 0;
 
     // Map
-    p->map = default_map;
     
     // Objets
-    p->objects = default_objects;
 
     p->first = 0;
     p->N_objects = 0;
@@ -57,24 +57,26 @@ int lottery(){
 
 // Update objets
 void update_objects(struct jeu *p){
-    
+
+    // -- OBJETS --
+    struct object *objects = get_objects();
+
     for (int i = p->first; i < p->N_objects; i++){
         
-
         p->Is[i % HAUTEUR]++;
 
         if (p->Is[i % HAUTEUR] == HAUTEUR){
             
             // Collision radeau
 
-            bool collision_left = p->Js[i%HAUTEUR] >= (p->position-p->fleet[p->index].size); 
+            bool collision_left = p->Js[i%HAUTEUR] >= (p->position-fleet[p->index_fleet][p->index].size); 
 
-            bool collision_right = p->Js[i%HAUTEUR] <= (p->position+p->fleet[p->index].size); 
+            bool collision_right = p->Js[i%HAUTEUR] <= (p->position+fleet[p->index_fleet][p->index].size); 
 
             if (collision_left && collision_right){
                 
                 // Action d'objet
-                p->objects[p->Ks[i + HAUTEUR]](p);
+                objects[p->Ks[i + HAUTEUR]].action(p);
 
             }
             else{
