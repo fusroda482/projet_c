@@ -34,17 +34,6 @@
 
 #define frame 5e3
 
-// -- DROP OBJECTS --
-bool drop(int delta_t, int *frame_tot){
-
-	if (*(frame_tot) == delta_t){
-	    *frame_tot = 0; // Réinitialiser la variable
-	    return true;
-	}
-	return false;
-}
-
-
 // -- MAIN MENU SWITCH --
 void menu_principal_switch(struct menu *m){
 	
@@ -134,11 +123,12 @@ int main(){
 
 	config_terminal(); // Mode non canonique
     
-    display_menu(m_main);
+    //display_menu(m_main);
 	
 	while(m_main->position != 5){
         
         interactive_menu(m_main);
+        menu_principal_switch(m_main);
 		
 	}
 

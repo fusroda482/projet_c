@@ -52,10 +52,11 @@ void my_free_menu(struct menu *m){
 }
 
 void move_menu(struct menu *m, char key, char up, char down){
+
     if (key == up){m->position = PMOD(m->position-1, m->size);}
 
-    if (key == down){m->position = m->position % m->size;}
-
+    
+    if (key == down){m->position = (m->position + 1) % m->size;}
 }
 
 
@@ -79,27 +80,6 @@ struct menu *get_save_menu() {
     return m_save;
 }
 
-// MENUS STRUCTURES
-/*
-struct menu m_main = {
-    6,
-    0,
-    main_menu_options
-};
-
-struct menu m_pause = {
-    4,
-    0,
-    pause_menu_options
-};
-
-struct menu m_save = {
-    3,
-    0,
-    save_menu_options
-};
-*/
-
 // Display
 void display_menu(struct menu *m){ 
 		
@@ -114,18 +94,6 @@ void display_menu(struct menu *m){
 	}
 }
 
-// Interaction
-void update_position(struct menu *m, char key, char up, char down){
-
-	if (key == up){
-		m->position = PMOD(m->position - 1, m->size);
-	}
-	if (key == down){
-		m->position ++; 
-	}
-}
-
-
 /* --- GAME --- */
 
 void display_game(struct jeu *p){
@@ -135,15 +103,26 @@ void display_game(struct jeu *p){
 
     // Informations pour les objets
     // on commence par le plus haut sur la
+
     // map donc le dernier de la file
-    int index = (p->first + p->N_objects) % HAUTEUR;
+    
+    //printf("hauteur = %d", HAUTEUR);
+    
+    int index;
+
+    if (p->first == -1){index=0;}
+    else{
+    index = p->first + p->N_objects - 1 % HAUTEUR;
+    }
+    
+
+    //printf("index avant le for = %d", index);
     
     for (int i = -1; i < HAUTEUR+2; i++){
 
         // Mur gauche
         printf("%s", maps[p->index_map].border);
-        
-        for (int j = 0; j < LARGEUR; j++){
+        for (int j = -1; j < LARGEUR+1; j++){
         
             if (i == -1 || i == HAUTEUR+1){
 
@@ -152,14 +131,15 @@ void display_game(struct jeu *p){
             }
 
             // Radeau
-            if (i == HAUTEUR && (j >= p->position - fleet[p->index_fleet][p->index].size) && (j <= p->position + fleet[p->index_fleet][p->index].size)){
+            else if (i == HAUTEUR && (j >= p->position - fleet[p->index_fleet][p->index].size) && (j <= p->position + fleet[p->index_fleet][p->index].size)){
                 
-                printf("- ");
+                printf("-");
             } 
 
             // Objets
-            if (p->Is[index] == i && p->Js[index] == j){
+            else if (p->first != -1 && p->Is[index] == i && p->Js[index] == j){
                 
+                printf("Index : %d", index);
                 printf("%s", objects[p->Ks[index]].skin);
 
                 index = PMOD(index-1, HAUTEUR);
@@ -169,7 +149,7 @@ void display_game(struct jeu *p){
             else{printf(" ");}
 
         }
-    
+        printf("%s\n", maps[p->index_map].border);
     }   
 }
 

@@ -100,9 +100,9 @@ struct raft fleet[1][3] = {
 };
 
 // -- ACTIONS --
-void move_raft(struct jeu *p, char direction, char left, char right){
+void move_raft(struct jeu *p, char key, char left, char right){
     
-    if (direction == right && (p->position + fleet[p->index_fleet][p->index].size) > 0){p->position++;}
+    if (key == right && (p->position + fleet[p->index_fleet][p->index].size) < LARGEUR){p->position++;}
 
-    if (direction == left && (p->position - fleet[p->index_fleet][p->index].size) > 0){p->position++;}
+    if (key == left && (p->position - fleet[p->index_fleet][p->index].size) >= 0){p->position--;}
 }

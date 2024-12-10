@@ -73,7 +73,7 @@ struct object *get_objects();
 int object_generator();
 
 // Raft
-void move_raft(struct jeu *p, char direction, char left, char right);
+void move_raft(struct jeu *p, char key, char left, char right);
 void score_pp(struct jeu *p);
 void bigger(struct jeu *p);
 void smaller(struct jeu *p);

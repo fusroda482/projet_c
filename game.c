@@ -3,6 +3,7 @@
 #include <stdlib.h> 
 #include <stdbool.h> 
 #include <string.h> 
+#include <unistd.h>
 
 #include "material.h"
 #include "game.h"
@@ -22,17 +23,13 @@ void init_jeu(struct jeu *p) {
     p->index_fleet = 0;
     p->index_map = 0;
 
-
     // Joueur
 	p->score = 0;
 	strcpy(p->pseudo, "Inconnu.e\n");// ??
     p->money = 0;
-
-    // Map
     
     // Objets
-
-    p->first = 0;
+    p->first = -1;
     p->N_objects = 0;
 }
 
@@ -44,13 +41,13 @@ int lottery(){
 	
 	// Propabilité de chaque objet : 
 	
-	if(apparition > 0 && apparition <= 10){return 1;}
+	if(apparition > 0 && apparition <= 10){return 0;}
 	
-	if(apparition == 11){return 2;}
+	if(apparition == 11){return 1;}
 	
-	if(apparition == 12){return 3;}
+	if(apparition == 12){return 2;}
 	
-	return 0;
+	return -1;
 }
 
 // Objet Augmente taille de 1 (objet2)
@@ -58,56 +55,65 @@ int lottery(){
 // Update objets
 void update_objects(struct jeu *p){
 
+    //sleep(2);
+    //printf("on va dans l'update!");
     // -- OBJETS --
     struct object *objects = get_objects();
 
-    for (int i = p->first; i < p->N_objects; i++){
-        
-        p->Is[i % HAUTEUR]++;
+    int i;
 
-        if (p->Is[i % HAUTEUR] == HAUTEUR){
+    for (int k = 0; k < p->N_objects; k++){
+        
+        i = (p->first+k) % HAUTEUR;
+
+        p->Is[i]++;
+
+        if (p->Is[i] == HAUTEUR){
             
             // Collision radeau
 
-            bool collision_left = p->Js[i%HAUTEUR] >= (p->position-fleet[p->index_fleet][p->index].size); 
+            bool collision_left = p->Js[i] >= (p->position-fleet[p->index_fleet][p->index].size); 
 
-            bool collision_right = p->Js[i%HAUTEUR] <= (p->position+fleet[p->index_fleet][p->index].size); 
+            bool collision_right = p->Js[i] <= (p->position+fleet[p->index_fleet][p->index].size); 
 
             if (collision_left && collision_right){
                 
                 // Action d'objet
-                objects[p->Ks[i + HAUTEUR]].action(p);
+                objects[p->Ks[i]].action(p);
 
             }
             else{
                 // Loupé : -1 point si ce n'est pas un bonus
-                if (p->Ks[i % HAUTEUR] == 1){
+                if (p->Ks[i] == 1){
 
                     p->score--;
                 }
             }
 
             // On supprime l'objet
-            p->Is[i % HAUTEUR] = 0;
-            p->Js[i % HAUTEUR] = 0;
-            p->Ks[i % HAUTEUR] = 0;
+            p->Is[i] = 0;
+            p->Js[i] = 0;
+            p->Ks[i] = 0;
 
             p->first = (p->first + 1) % HAUTEUR;
             p->N_objects--;
-
         }
-
     }
 
     // Enfin, on tire aléatoirement un nouvel objet
 
     int lot = lottery();
 
-    if (lot > 0){
+    if (lot >= 0){
+
         // C'est gagné !
-        p->Is[(p->first + p->N_objects) % HAUTEUR] = 0;
-        p->Js[(p->first + p->N_objects) % HAUTEUR] = rand() % LARGEUR;
-        p->Ks[(p->first + p->N_objects) % HAUTEUR] = lot;
+        int index;
+        if (p->first == -1){index = 0;}
+        else {index = (p->first + p->N_objects) % HAUTEUR;}
+
+        p->Is[index] = 0;
+        p->Js[index] = rand() % LARGEUR;
+        p->Ks[index] = lot;
     }
     
 }

@@ -22,18 +22,16 @@
 
 void solo(int slot_number){
 	       
-
 	srand(time(NULL)); // Pour l'aléatoire
 	
 	struct jeu p; 
 	
 	if (slot_number == 0){init_jeu(&p);} // Initialiser
-
 	else {p = load(slot_number);}
 	
-	system("clear");
+	//system("clear");
 	
-	display_game(&p);
+	//display_game(&p);
 	
 	char key;
 
@@ -51,21 +49,22 @@ void solo(int slot_number){
             if (m_pause->position == 2){
                 break;
             }
-
-			
 		}
 		
 		// Si Une touche est tapée deplacer le radeau
 		if (read(STDIN_FILENO, &key, 1) == 1){
 			move_raft(&p, key, 'a', 'd');
+            usleep(frame);
 		}
 		
-		usleep(frame); // Delais pour que les objets tombent (en microsecondes)
+		usleep(frame*10); // Delais pour que les objets tombent (en microsecondes)
 		
+        
+        int delta_t = frame*50;
 		frame_total += frame;
-		
-		if(drop(frame*50, &frame_total)){
-			
+
+        if (frame_total == delta_t){
+			frame_total = 0;
 			update_objects(&p);
 		}
 				
@@ -112,12 +111,15 @@ void multi(){
 		usleep(frame); // Delais pour que les objets tombent (en microsecondes)
 		
 		frame_total += frame;
+
+	    int delta_t = 50;	
 		
-		if(drop(frame*50, &frame_total)){
-			
+        if (frame_total == delta_t){
+			frame_total = 0;
 			update_objects(&p1);
 			update_objects(&p2);
 		}
+	
 		system("clear");
 	}
 	
