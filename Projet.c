@@ -22,8 +22,9 @@
 #include "menu.h"
 #include "material.h"
 #include "gamemode.h"
+#include "gestion_clavier.h"// à remplacer par config_terminal.h
 
-#include "config_terminal.c"// à remplacer par config_terminal.h
+#include "main.h"
 
 //#define LARGEUR 10
 //#define HAUTEUR 14
@@ -31,10 +32,10 @@
 #define frame 5e4
 
 // -- DROP OBJECTS --
-bool drop(int delta_t, int * frame_tot){
+bool drop(int delta_t, int *frame_tot){
 
 	if (*(frame_tot) == delta_t){
-	    *frame_tot = 0; // Renitialiser la variable
+	    *frame_tot = 0; // Réinitialiser la variable
 	    return true;
 	}
 	return false;
@@ -104,12 +105,14 @@ void menu(struct menu *m){
 		
 		system("clear");
 	}
-
+    
+    //m->actions[m->position];
+    
 	//key = 't';// WHY ??
 }
 
 // Programme principal
-int main(void){
+int main(){
 
 	config_terminal(); // Mode non canonique
     

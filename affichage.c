@@ -4,10 +4,41 @@
 #include <stdbool.h> 
 #include <time.h> 
 
-#include "menu.c"
+#include "material.h"
+#include "affichage.h"
 
+#define PMOD(a,b) ( ( (a) + (b) ) % b )
 
 /* --- MENU --- */
+// MENUS TEXTES
+// Principal
+char *main_menu_options[6] = {"Solo", "Multijoueur", "Charger", "Skin", "Réglages", "Quitter"};
+
+// Pause
+char *pause_menu_options[4] = {"Continuer", "Sauvegarder", "Réglage", "Quitter"};
+
+// Sauvegarde
+char *save_menu_options[3] = {"Sauvegarde 1", "Sauvegarde 2", "Sauvegarde 3"};
+
+// MENUS STRUCTURES
+struct menu m_main = {
+    main_menu_options,
+    6,
+    0
+};
+
+struct menu m_pause = {
+    pause_menu_options,
+    4,
+    0
+};
+
+struct menu m_save = {
+    save_menu_options,
+    3,
+    0
+};
+
 
 // Display
 void display_menu(struct menu *m){ 
@@ -15,7 +46,7 @@ void display_menu(struct menu *m){
 	for (int i = 0; i < m->size; i++){
 		
 		if (i == m->position){
-			printf("\033[4m%s\033[24m\n\n", menu[i]);		
+			printf("\033[4m%s\033[24m\n\n", m->options[i]);		
 		}
 		else{
 			printf("%s\n\n", m->options[i]);
@@ -40,24 +71,25 @@ void update_position(struct menu *m, char key, char up, char down){
 void display_game(struct jeu *p){
 
     // Informations pour les objets
-    int index = p->first;
-
+    // on commence par le plus haut sur la
+    // map donc le dernier de la file
+    int index = (p->first + p->N_objects) % HAUTEUR;
     
     for (int i = -1; i < HAUTEUR+2; i++){
 
         // Mur gauche
-        print("%s", p->theme.border);
+        printf("%s", p->map.border);
         
         for (int j = 0; j < LARGEUR; j++){
         
             if (i == -1 || i == HAUTEUR+1){
 
                 // Plafond et plancher
-                printf("%s", p->theme.border);
+                printf("%s", p->map.border);
             }
 
             // Radeau
-            if (i == HAUTEUR && (j >= p->position - p->size) && (j <= p->position + p->size)){
+            if (i == HAUTEUR && (j >= p->position - p->fleet[p->index].size) && (j <= p->position + p->fleet[p->index].size)){
                 
                 printf("- ");
             } 
@@ -65,11 +97,13 @@ void display_game(struct jeu *p){
             // Objets
             if (p->Is[index] == i && p->Js[index] == j){
                 
-                printf("%s", p->theme.objets[p->Ks[index]]);
+                printf("%s", p->objects[p->Ks[index]]);
+
+                index = PMOD(index-1, HAUTEUR);
 
             }
 
-            else{print(" ");}
+            else{printf(" ");}
 
         }
     

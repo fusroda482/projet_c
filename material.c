@@ -2,6 +2,9 @@
 #include <stdio.h>
 
 #include "material.h"
+#include "game.h"
+
+#define PMOD(a,b) ( ( (a) + (b) ) % b )
 
 // Maps
 struct Map default_map = {"*"}; 
@@ -9,6 +12,8 @@ struct Map default_map = {"*"};
 
 /* --- OBJETS --- */
 // -- Actions --
+//
+// DIMINUE SCORE !!
 
 // 1. Augmente score
 void score_pp(struct jeu *p){
@@ -68,24 +73,24 @@ struct object default_objects[3] = {
 // -- ACTIONS --
 void move_raft(struct jeu *p, char direction, char left, char right){
     
-    if (direction == right && (p->position + p->size) > 0){p->position++;}
-    if (direction == left && (p->position - p->size) > 0){p->position++;}
+    if (direction == right && (p->position + p->fleet[p->index].size) > 0){p->position++;}
+    if (direction == left && (p->position - p->fleet[p->index].size) > 0){p->position++;}
 }
 
 
 // -- SKINS --
 // --default --
-struct raft default_raft_S{
+struct raft default_raft_S = {
     1,
     "___"
 };
 
-struct raft default_raft_M{
+struct raft default_raft_M = {
     2,
     "_____"
 };
 
-struct raft default_raft_L{
+struct raft default_raft_L = {
     3,
     "_______"
 };

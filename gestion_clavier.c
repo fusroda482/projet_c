@@ -2,6 +2,8 @@
 #include <termios.h>
 #include <fcntl.h>
 
+#include "gestion_clavier.h"
+
 struct termios ancien_param;
 
 void restaurer_terminal() {

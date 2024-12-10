@@ -1,10 +1,21 @@
 /* -------- GAMEMODE.C -------- */
 
 #include <stdlib.h>
+#include <time.h>
+
+#include <unistd.h>
+#include <termios.h>
+#include <fcntl.h>
+
+#include "gestion_clavier.h"
+
+#include "material.h"
+#include "game.h"
+#include "affichage.h"
+#include "save.h"
+#include "main.h"
 
 #include "gamemode.h"
-#include "material.h"
-#include "menu.h"
 
 // Partie Solo : 
 
@@ -16,30 +27,31 @@ void solo(int slot_number){
 	
 	struct jeu p; 
 	
-	if (slot_number == 0){p = init_jeu();} // Initialiser
+	if (slot_number == 0){init_jeu(&p);} // Initialiser
 
 	else {p = load(slot_number);}
 	
 	system("clear");
 	
-	display_game(p);
+	display_game(&p);
 	
 	char key;
 
 	int frame_total = 0;
+    int frame = 1e3;
 	
 	while(key != 'q' && p.score > -50){
 	
 		// Pause
 		if(key == 'p'){
 			int option =  menu(taille_menu_pause, mpause);
-			touche = m_pause->action(option, p);
+			key = m_pause->action(option, p);
 			
 		}
 		
 		// Si Une touche est tapée deplacer le radeau
 		if (read(STDIN_FILENO, &key, 1) == 1){
-			p.position = move_raft(key, &p, 'a', 'd');
+			move_raft(&p, key, 'a', 'd');
 		}
 		
 		usleep(frame); // Delais pour que les objets tombent (en microsecondes)
