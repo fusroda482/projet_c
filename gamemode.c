@@ -37,7 +37,7 @@ void solo(int slot_number){
 
 	int frame_total = 0;
     int frame = 1e3;
-	
+    /*	
 	while(key != 'q' && p.score > -50){
 	
 			
@@ -62,24 +62,66 @@ void solo(int slot_number){
 			 
 		display_game(&p);
 		
-		printf("\n Score : %d\n", p.score); //Afficher le score de la partie
-		// Pause
-		if(key == 'p'){
+		void solo(int slot_number){
 
-            struct menu *m_pause = get_pause_menu();
-            interactive_menu(m_pause);
+        srand(time(NULL)); // Pour l'aléatoire
 
-            key = menu_pause_switch(m_pause, &p);
+        struct jeu p;
+
+        if (slot_number == 0){init_jeu(&p);} // Initialiser
+        else {p = load(slot_number);}
+
+        //system("clear");
+
+        //display_game(&p);
+
+        char key;
+
+        int frame_total = 0;
+    */
+
+        while(key != 'q' && p.score > -50){
+
+                // Si Une touche est tapée deplacer le radeau
+            if (read(STDIN_FILENO, &key, 1) == 1){
+                    move_raft(&p, key, 'a', 'd');
+            usleep(frame);
+                }
+
+            usleep(frame*10); // Delais pour que les objets tombent (en microsecondes)
+
+
+            int delta_t = frame*50;
+            frame_total += frame;
+
+            if (frame_total == delta_t){
+                frame_total = 0;
+                update_objects(&p);
+            }
+
+            system("clear");
+
+            display_game(&p);
+
+            printf("\n Score : %d\n", p.score); //Afficher le score de la partie
+            // Pause
+            if(key == 'p'){
+
+                struct menu *m_pause = get_pause_menu();
+                interactive_menu(m_pause);
+
+                key = menu_pause_switch(m_pause, &p);
+
+                my_free_menu(m_pause);
             //if (m_pause->position == 2){
 
             //    key = 'q';
             //}
-		}
-	
-	}
-	
-	key = 'q';// Pourquoi ?
-	//restaurer_terminal();
+            }
+
+        }
+
+    key = 'r';        
 }
 
 void multi(){
@@ -102,17 +144,7 @@ void multi(){
     int frame = 1e3;
 	
 	while(key != 'q'){
-        // Pause
-		if(key == 'p'){
-
-            struct menu *m_pause = get_pause_menu();
-            interactive_menu(m_pause);
-
-            if (m_pause->position == 2){
-                break;
-            }
-		}
-		
+        
 
         
 		// Si Une touche est tapée déplacer le radeau
@@ -136,8 +168,19 @@ void multi(){
 		system("clear");
 
 		display_game_multi(&p1, &p2);
+        // Pause
+		if(key == 'p'){
+
+            struct menu *m_pause = get_pause_menu();
+            interactive_menu(m_pause);
+
+            if (m_pause->position == 2){
+                break;
+            }
+        my_free_menu(m_pause);
+		}
 	}
 	
-	//key = 'r'; // Pourquoi ??
+	key = 'r'; // Pourquoi ??
 	//restaurer_terminal();
 }

@@ -33,7 +33,6 @@ struct jeu{
     //struct raft fleet[3];
     int index; //index du radeau en cours d'utilisation
     int index_fleet;
-    
 
     // Joueur
 	int score;

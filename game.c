@@ -31,6 +31,12 @@ void init_jeu(struct jeu *p) {
     // Objets
     p->first = -1;
     p->N_objects = 0;
+
+    for (int i = 0; i < HAUTEUR; i++){
+        p->Is[i] = 0;
+        p->Js[i] = 0;
+        p->Ks[i] = 0;
+    }
 }
 
 

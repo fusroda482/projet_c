@@ -44,6 +44,7 @@ void menu_principal_switch(struct menu *m){
             interactive_menu(m_save);
             int slot_number = m_save->position;
 			solo(slot_number + 1);// car savegarde 1, 2 ou 3
+            my_free_menu(m_save);
 			break;
 
         //case 3 : // Skin
@@ -70,6 +71,7 @@ char menu_pause_switch(struct menu *m, struct jeu *p){
             interactive_menu(m_save);
             int slot_number = m_save->position + 1;
 			save(*p, slot_number);
+            my_free_menu(m_save);
 			return 'c';
 			
 		case 2 : // Retour menu principal
