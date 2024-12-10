@@ -3,6 +3,8 @@
 #ifndef MATERIAL_H
 #define MATERIAL_H
 
+#define LARGEUR 10
+#define HAUTEUR 14
 // JEU
 // La structure
 
@@ -40,7 +42,7 @@ struct jeu{
     // Radeau et flotte
 	int position;
     struct raft fleet[3];
-    int size; //index du radeau en cours d'utilisation
+    int index; //index du radeau en cours d'utilisation
 
     // Joueur
 	int score;
@@ -60,7 +62,7 @@ struct jeu{
 };
 
 // PROTOTYPES
-void initialiser_jeu(struct jeu *p);
+void init_jeu(struct jeu *p);
 
 
 
@@ -73,4 +75,5 @@ int object_generator();
 void move_raft(struct jeu *p, char direction, char left, char right);
 void bigger(struct jeu *p);
 void smaller(struct jeu *p);
+void score_pp(struct jeu *p);
 #endif

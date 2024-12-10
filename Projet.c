@@ -5,20 +5,28 @@
 
 #include <stdio.h>
 #include <stdlib.h> 
-#include <math.h> 
+//#include <math.h> 
 #include <stdbool.h> 
 #include <time.h> 
 //#include <string.h>
 
+/*
 #include "gestion_clavier.c"
 #include "objet.c"
 #include "menu.c"
 #include "skin.c"
 #include "material.c"
 #include "gamemode.c"
+*/
 
-#define LARGEUR 10
-#define HAUTEUR 14
+#include "menu.h"
+#include "material.h"
+#include "gamemode.h"
+
+#include "config_terminal.c"// à remplacer par config_terminal.h
+
+//#define LARGEUR 10
+//#define HAUTEUR 14
 
 #define frame 5e4
 

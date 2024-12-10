@@ -6,6 +6,7 @@
 
 #include "menu.c"
 
+
 /* --- MENU --- */
 
 // Display
@@ -56,7 +57,7 @@ void display_game(struct jeu *p){
             }
 
             // Radeau
-            if (i == HAUTEUR && (j >= p->position - p->size && (j <= p->position + p->size)){
+            if (i == HAUTEUR && (j >= p->position - p->size) && (j <= p->position + p->size)){
                 
                 printf("- ");
             } 
@@ -76,7 +77,7 @@ void display_game(struct jeu *p){
 }
 
 // Partie Multijouer :
-void display_game_multi(struct jeu &p1, struct jeu &p2){
+void display_game_multi(struct jeu *p1, struct jeu *p2){
 	
     display_game(p1);
 	printf("\n Score : %d\n", p1->score);

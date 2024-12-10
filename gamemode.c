@@ -1,7 +1,10 @@
 /* -------- GAMEMODE.C -------- */
 
-#include "gamemode.h"
+#include <stdlib.h>
 
+#include "gamemode.h"
+#include "material.h"
+#include "menu.h"
 
 // Partie Solo : 
 
@@ -56,7 +59,7 @@ void solo(int slot_number){
 		
 	}
 	
-	touche = 'r';// Pourquoi ?
+	key = 'r';// Pourquoi ?
 	//restaurer_terminal();
 }
 
@@ -66,8 +69,11 @@ void multi(){
 	
 	srand(time(NULL)); // Pour l'aléatoire
 	
-	struct jeu p1 = init_jeu();
-	struct jeu p2 = init_jeu();
+    struct jeu p1;
+    struct jeu p2;
+
+	p1 = init_jeu(&p1);
+	p2 = init_jeu(&p2);
 	
 	system("clear");
 	
@@ -96,6 +102,6 @@ void multi(){
 		system("clear");
 	}
 	
-	touche = 'r'; // Pourquoi ??
+	key = 'r'; // Pourquoi ??
 	//restaurer_terminal();
 }

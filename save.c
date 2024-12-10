@@ -1,9 +1,10 @@
 /* ------ SAVE.C ------ */
 
+#include <stdio.h>
 
 void save(struct jeu *p, int slot_number){
 	
-	FILE * sauvegarde = NULL;
+	FILE * savefile = NULL;
 	
 	// Création Fichier Sauvegarde
 	
@@ -24,12 +25,12 @@ void save(struct jeu *p, int slot_number){
     fprintf(savefile, "%s\n", p->size); 
 
     // Joueur
-    fprint(savefile, "%d\n", p->score);
-    fprint(savefile, "%s\n", p->pseudo);
-    fprint(savefile, "%d\n", p->money);
+    fprintf(savefile, "%d\n", p->score);
+    fprintf(savefile, "%s\n", p->pseudo);
+    fprintf(savefile, "%d\n", p->money);
 	
     // Jeu
-    fprint(savefile, "%s\n", p->map.name);
+    fprintf(savefile, "%s\n", p->map.name);
 
 	// Sauvegarder les objets 
     for (int i = p->first; i <= p->N_objets; i++){
@@ -81,21 +82,21 @@ struct jeu load(int slot_number){
     fscanf(loadfile, "%s", &p->money);
 
     // Jeu
-    fscanf(loadfile, "%s", p->map.name);
+    fscanf(loadfile, "%s", &p->map.name);
     
 
 	// Sauvegarder les objets // Y REVENIR !
     for (int i = 0; i <= 10; i++){
-        fscanf(loadfile, "%d", p->Is[i]);
+        fscanf(loadfile, "%d", &p->Is[i]);
     }
     for (int i = 0; i <= 10; i++){
-        fscanf(loadfile, "%d", p->Js[i]);
+        fscanf(loadfile, "%d", &p->Js[i]);
     }
     for (int i = 0; i <= 10; i++){
-        fscanf(loadfile, "%d", p->Ks[i]);
+        fscanf(loadfile, "%d", &p->Ks[i]);
     }
 	
-    fclose(charge); // Fermeture du fichier
+    fclose(loadfile); // Fermeture du fichier
 	
 	return p; 
 }

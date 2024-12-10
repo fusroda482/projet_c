@@ -1,16 +1,15 @@
 /* ---- GAME.C ---- */
 #include <stdio.h>
-#include <stdlib.h> 
-#include <stdbool.h> 
-#include <string.h> 
+//#include <stdlib.h> 
+//#include <stdbool.h> 
+//#include <string.h> 
 
-
-#include "objet.h"
-
-#include "material.c"
+#include "material.h"
 
 #define PMOD(a,b) ( ( (a) + (b) ) % b )
 
+//#define HAUTEUR 10
+//#define LARGEUR 14
 
 // La méthode pour initialiser la structure
 // avec des paramètres par défaut
@@ -39,7 +38,7 @@ void init_jeu(struct jeu *p) {
 
 
 // Determiner l'objet qui va apparaitre en fonction de sa propabilité
-int lottery(void){
+int lottery(){
 
 	int apparition = rand() % 30;
 	
@@ -57,7 +56,7 @@ int lottery(void){
 // Objet Augmente taille de 1 (objet2)
 
 // Update objets
-void update_objets(struct jeu *p){
+void update_objects(struct jeu *p){
     
     for (int i = p->first; i < p->N_objects; i++){
         
@@ -70,8 +69,8 @@ void update_objets(struct jeu *p){
             bool collision_right (p->Js[i % ])
             if (collision){
                 
-                // Actions d'objet
-                p->objets[p->Ks[i + HAUTEUR]];
+                // Action d'objet
+                p->objects[p->Ks[i + HAUTEUR]](p);
 
             }
             else{
@@ -100,9 +99,9 @@ void update_objets(struct jeu *p){
 
     if (lot > 0){
         // C'est gagné !
-        ps->Is[(ps->first + ps->length) % HAUTEUR] = 0;
-        ps->Js[(ps->first + ps->length) % HAUTEUR] = rand() % LARGEUR;
-        ps->Js[(ps->first + ps->length) % HAUTEUR] = lot;
+        ps->Is[(ps->first + ps->N_objects) % HAUTEUR] = 0;
+        ps->Js[(ps->first + ps->N_objects) % HAUTEUR] = rand() % LARGEUR;
+        ps->Js[(ps->first + ps->N_objects) % HAUTEUR] = lot;
     }
     
 }

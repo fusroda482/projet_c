@@ -11,7 +11,7 @@
 #include "menu.h"
 // MENUS TEXTES
 // Principal
-char *main_menu_options[6] = {"Solo", "Multijoueur", "Charger", "Skin", "Réglages", "Quitter" };
+char *main_menu_options[6] = {"Solo", "Multijoueur", "Charger", "Skin", "Réglages", "Quitter"};
 
 // Pause
 char *pause_menu_options[4] = {"Continuer", "Sauvegarder", "Réglage", "Quitter"};

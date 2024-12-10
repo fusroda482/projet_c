@@ -1,13 +1,15 @@
+/* ----- MATERIAL.C ----- */
 #include <stdio.h>
 
-#include "objet.h"
+#include "material.h"
 
 // Maps
-struct Map default_map{'*'}; 
+struct Map default_map = {"*"}; 
 
 
 /* --- OBJETS --- */
 // -- Actions --
+
 // 1. Augmente score
 void score_pp(struct jeu *p){
     
@@ -17,19 +19,19 @@ void score_pp(struct jeu *p){
 // 2. Augmente taille
 void bigger(struct jeu *p){
 
-    p->raft = (p->raft + 1) % 3; // 3 tailles disponibles
+    p->index = (p->index + 1) % 3; // 3 tailles disponibles
 
     // Gestion collision en cas d'agrandissement
     // 1. se cogne contre le mur de droite
-	if (p->position + p->fleet[p->raft].size > LARGEUR){p->position--;}
+	if (p->position + p->fleet[p->index].size > LARGEUR){p->position--;}
     // 2. se cogne contre le mur de gauche	
-	if (p->position - p->fleet[p->raft].size < 0){p->position++;}; 
+	if (p->position - p->fleet[p->index].size < 0){p->position++;} 
 }
 
 // 3. Diminue taille
 void smaller(struct jeu *p){
 
-    p->raft = PMOD(p->raft - 1, 3);	
+    p->index = PMOD(p->index - 1, 3);	
 } 
 
 // -- default --

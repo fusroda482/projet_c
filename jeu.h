@@ -8,7 +8,7 @@
 
 // JEU
 // La structure
-struct jeu {
+struct jeu{
 	int position;
 	int objets[HAUTEUR][LARGEUR];
 	int score;
@@ -18,7 +18,6 @@ struct jeu {
     //Nouveaux :
 	char pseudo[20];
 	int argent;
-	
 };
 // PROTOTYPE
 void initialiser_jeu(struct jeu *p);
