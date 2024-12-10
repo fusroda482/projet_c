@@ -51,6 +51,14 @@ void my_free_menu(struct menu *m){
     }
 }
 
+void move_menu(struct menu *m, char key, char up, char down){
+    if (key == up){m->position = PMOD(m->position-1, m->size);}
+
+    if (key == down){m->position = m->position % m->size;}
+
+}
+
+
 // Fonction pour initialiser tous les menus
 void initialize_menus() {
     m_main = create_menu(6, main_menu_options);

@@ -32,7 +32,7 @@
 //#define LARGEUR 10
 //#define HAUTEUR 14
 
-#define frame 5e4
+#define frame 5e3
 
 // -- DROP OBJECTS --
 bool drop(int delta_t, int *frame_tot){
