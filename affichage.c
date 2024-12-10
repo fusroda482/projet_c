@@ -103,19 +103,16 @@ void display_game(struct jeu *p){
 
     // Informations pour les objets
     // on commence par le plus haut sur la
-
     // map donc le dernier de la file
     
     //printf("hauteur = %d", HAUTEUR);
     
     int index;
 
-    if (p->first == -1){index=0;}
-    else{
-    index = p->first + p->N_objects - 1 % HAUTEUR;
-    }
+    //if (p->first == -1){index=0;}
     
-
+    index = (p->first + p->N_objects - 1) % HAUTEUR;
+    
     //printf("index avant le for = %d", index);
     
     for (int i = -1; i < HAUTEUR+2; i++){
@@ -139,10 +136,12 @@ void display_game(struct jeu *p){
             // Objets
             else if (p->first != -1 && p->Is[index] == i && p->Js[index] == j){
                 
-                printf("Index : %d", index);
                 printf("%s", objects[p->Ks[index]].skin);
 
                 index = PMOD(index-1, HAUTEUR);
+
+                //printf("First: %d, N_objects: %d, Initial index: %d\n", p->first, p->N_objects, index);
+                //printf("Index : %d\n", index);
 
             }
 
@@ -150,6 +149,7 @@ void display_game(struct jeu *p){
 
         }
         printf("%s\n", maps[p->index_map].border);
+
     }   
 }
 

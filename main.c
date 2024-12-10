@@ -11,21 +11,12 @@
 #include <unistd.h>
 //#include <string.h>
 
-/*
-#include "gestion_clavier.c"
-#include "objet.c"
-#include "menu.c"
-#include "skin.c"
-#include "material.c"
-#include "gamemode.c"
-*/
-
 #include "menu.h"
 #include "material.h"
 #include "gamemode.h"
 #include "affichage.h"
 #include "save.h"
-#include "gestion_clavier.h"// à remplacer par config_terminal.h
+#include "gestion_clavier.h"
 
 #include "main.h"
 

@@ -39,6 +39,7 @@ int main() {
     return 0;
 }
 */
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -77,6 +78,14 @@ int main() {
     free(m_main);
     free(m_pause);
     free(m_save);
+
+
+    int n = 0;
+    for (int i = 0; i<n; i++){
+        printf("j'suis dans la boucle");
+    }
+    printf("end");
+
 
     return 0;
 }

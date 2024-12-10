@@ -65,6 +65,8 @@ void update_objects(struct jeu *p){
     for (int k = 0; k < p->N_objects; k++){
         
         i = (p->first+k) % HAUTEUR;
+        //sleep(5);
+        //printf("le petit i d'update objects : %d",i);
 
         p->Is[i]++;
 
@@ -105,15 +107,23 @@ void update_objects(struct jeu *p){
     int lot = lottery();
 
     if (lot >= 0){
+        //printf("le fameux lot : %d", lot);
+        //sleep(5);
 
         // C'est gagné !
-        int index;
-        if (p->first == -1){index = 0;}
-        else {index = (p->first + p->N_objects) % HAUTEUR;}
+        
 
-        p->Is[index] = 0;
-        p->Js[index] = rand() % LARGEUR;
-        p->Ks[index] = lot;
+        int new_index;
+        if (p->first == -1){
+            new_index = 0;
+            p->first++;
+        }
+        else {new_index = (p->first + p->N_objects) % HAUTEUR;}
+
+        p->N_objects++;
+        p->Is[new_index] = 0;
+        p->Js[new_index] = rand() % LARGEUR;
+        p->Ks[new_index] = lot;
     }
     
 }

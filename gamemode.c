@@ -92,15 +92,15 @@ void multi(){
 	init_jeu(&p1);
 	init_jeu(&p2);
 	
-	system("clear");
+	//system("clear");
 	
 	char key;
+
 	int frame_total = 0;
     int frame = 1e3;
 	
 	while(key != 'q'){
 
-		display_game_multi(&p1, &p2);
         
 		// Si Une touche est tapée déplacer le radeau
 		if(read(STDIN_FILENO, &key, 1) == 1){
@@ -108,11 +108,11 @@ void multi(){
 			move_raft(&p2, key, '1', '3');
 		}
 		
-		usleep(frame); // Delais pour que les objets tombent (en microsecondes)
+		usleep(frame*10); // Delais pour que les objets tombent (en microsecondes)
 		
 		frame_total += frame;
 
-	    int delta_t = 50;	
+	    int delta_t = frame * 50;	
 		
         if (frame_total == delta_t){
 			frame_total = 0;
@@ -121,6 +121,8 @@ void multi(){
 		}
 	
 		system("clear");
+
+		display_game_multi(&p1, &p2);
 	}
 	
 	//key = 'r'; // Pourquoi ??
