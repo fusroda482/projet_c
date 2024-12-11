@@ -2,7 +2,10 @@
 
 #ifndef GAME_H
 #define GAME_H
+
+#include "material.h"
 // PROTOTYPES
+
 
 void init_jeu(struct jeu *p);
 int lottery();

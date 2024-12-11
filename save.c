@@ -15,9 +15,9 @@ void save(struct jeu *p, int slot_number){
 	if(slot_number == 2){savefile = fopen("Sauvegarde2.txt", "w");}
 	if(slot_number == 3){savefile = fopen("Sauvegarde3.txt", "w");}
 	
-	if(savefile == NULL){		// Erreur dans l'ouverture du programme
-		
-		printf("Problème à l'ouverture de sauvegarde. Fin de la sauvegarde.\n");
+	if(savefile == NULL){		
+        // Erreur dans l'ouverture du programme
+	    printf("Problème à l'ouverture de sauvegarde. Fin de la sauvegarde.\n");
 		return;
 }
 	
@@ -35,21 +35,24 @@ void save(struct jeu *p, int slot_number){
 	
 
 	// Sauvegarder les objets 
-    for (int i = p->first; i <= p->N_objects; i++){
+    for (int i = p->first; i < p->N_objects; i++){
         fprintf(savefile, "%d ", p->Is[i]);
     }
 
     fprintf(savefile, "\n");
 
-    for (int i = p->first; i <= p->N_objects; i++){
+    for (int i = p->first; i < p->N_objects; i++){
         fprintf(savefile, "%d ", p->Js[i]);
     }
 
     fprintf(savefile, "\n");
 
-    for (int i = p->first; i <= p->N_objects; i++){
+    for (int i = p->first; i < p->N_objects; i++){
         fprintf(savefile, "%d ", p->Ks[i]);
     }
+
+    fprintf(savefile, "%d", p->first);
+    fprintf(savefile, "%d", p->N_objects);
 
 	fclose(savefile); // Fermermeture du fichier
 }
@@ -89,16 +92,21 @@ struct jeu load(int slot_number){
     
 
 	// Sauvegarder les objets // Y REVENIR !
-    for (int i = 0; i <= 10; i++){
+    for (int i = p.first; i < p.N_objects; i++){
         fscanf(loadfile, "%d", &p.Is[i]);
     }
-    for (int i = 0; i <= 10; i++){
+    for (int i = p.first; i < p.N_objects; i++){
         fscanf(loadfile, "%d", &p.Js[i]);
     }
-    for (int i = 0; i <= 10; i++){
+    for (int i = p.first; i < p.N_objects; i++){
         fscanf(loadfile, "%d", &p.Ks[i]);
     }
 	
+    
+    fscanf(loadfile, "%d", &p.first);
+    fscanf(loadfile, "%d", &p.N_objects);
+
+
     fclose(loadfile); // Fermeture du fichier
 	
 	return p; 

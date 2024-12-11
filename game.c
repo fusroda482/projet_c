@@ -25,18 +25,19 @@ void init_jeu(struct jeu *p) {
 
     // Joueur
 	p->score = 0;
-	strcpy(p->pseudo, "Inconnu.e\n");// ??
+	strcpy(p->pseudo, "Inconnu.e\n");
     p->money = 0;
     
     // Objets
-    p->first = -1;
-    p->N_objects = 0;
 
     for (int i = 0; i < HAUTEUR; i++){
         p->Is[i] = 0;
         p->Js[i] = 0;
         p->Ks[i] = 0;
     }
+
+    p->first = -1;
+    p->N_objects = 0;
 }
 
 
@@ -97,7 +98,6 @@ void update_objects(struct jeu *p){
                     p->score--;
                 }
             }
-
             // On supprime l'objet
             p->Is[i] = 0;
             p->Js[i] = 0;
